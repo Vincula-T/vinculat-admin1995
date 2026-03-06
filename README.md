@@ -1,1 +1,0 @@
-# vinculat-admin1995
