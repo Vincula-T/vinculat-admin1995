@@ -494,9 +494,137 @@
   .pago-btn:active { transform: scale(0.96); }
   .pb-validar  { background: rgba(16,185,129,0.2); color: #34D399; }
   .pb-rechazar { background: rgba(239,68,68,0.15); color: #F87171; }
+
+  /* ── LOGIN ── */
+  .login-screen {
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+  }
+  .login-logo {
+    width: 72px; height: 72px;
+    background: linear-gradient(135deg, var(--red), #FF6B6B);
+    border-radius: 22px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px;
+    margin-bottom: 24px;
+    box-shadow: 0 8px 32px rgba(239,68,68,0.35);
+  }
+  .login-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 26px;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 6px;
+  }
+  .login-sub {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 40px;
+    text-align: center;
+  }
+  .pin-dots {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 36px;
+  }
+  .pin-dot {
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: var(--border);
+    transition: all 0.2s;
+  }
+  .pin-dot.filled { background: var(--red); box-shadow: 0 0 12px rgba(239,68,68,0.5); }
+  .pin-dot.error  { background: var(--red); animation: shake 0.4s ease; }
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    20%      { transform: translateX(-6px); }
+    60%      { transform: translateX(6px); }
+    80%      { transform: translateX(-3px); }
+  }
+  .pin-pad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    width: 100%;
+    max-width: 280px;
+  }
+  .pin-key {
+    height: 68px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: all 0.12s;
+    user-select: none;
+  }
+  .pin-key:active { transform: scale(0.93); background: var(--border); }
+  .pin-key .num {
+    font-family: 'Syne', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: white;
+    line-height: 1;
+  }
+  .pin-key .letters {
+    font-size: 8px;
+    color: var(--muted);
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-top: 2px;
+  }
+  .pin-key.del { background: transparent; border-color: transparent; }
+  .pin-key.del .num { font-size: 20px; color: var(--muted); }
+  .login-error {
+    margin-top: 20px;
+    font-size: 12px;
+    color: var(--red);
+    font-weight: 600;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .login-error.show { opacity: 1; }
+
 </style>
 </head>
 <body>
+
+
+<!-- LOGIN SCREEN -->
+<div class="login-screen" id="login-screen">
+  <div class="login-logo">⚙️</div>
+  <div class="login-title">Vinculat Admin</div>
+  <div class="login-sub">Ingresa tu PIN de acceso</div>
+  <div class="pin-dots" id="pin-dots">
+    <div class="pin-dot" id="dot-0"></div>
+    <div class="pin-dot" id="dot-1"></div>
+    <div class="pin-dot" id="dot-2"></div>
+    <div class="pin-dot" id="dot-3"></div>
+  </div>
+  <div class="pin-pad">
+    <div class="pin-key" onclick="pinPress('1')"><div class="num">1</div><div class="letters"></div></div>
+    <div class="pin-key" onclick="pinPress('2')"><div class="num">2</div><div class="letters">ABC</div></div>
+    <div class="pin-key" onclick="pinPress('3')"><div class="num">3</div><div class="letters">DEF</div></div>
+    <div class="pin-key" onclick="pinPress('4')"><div class="num">4</div><div class="letters">GHI</div></div>
+    <div class="pin-key" onclick="pinPress('5')"><div class="num">5</div><div class="letters">JKL</div></div>
+    <div class="pin-key" onclick="pinPress('6')"><div class="num">6</div><div class="letters">MNO</div></div>
+    <div class="pin-key" onclick="pinPress('7')"><div class="num">7</div><div class="letters">PQRS</div></div>
+    <div class="pin-key" onclick="pinPress('8')"><div class="num">8</div><div class="letters">TUV</div></div>
+    <div class="pin-key" onclick="pinPress('9')"><div class="num">9</div><div class="letters">WXYZ</div></div>
+    <div class="pin-key" style="visibility:hidden;"></div>
+    <div class="pin-key" onclick="pinPress('0')"><div class="num">0</div><div class="letters"></div></div>
+    <div class="pin-key del" onclick="pinDel()"><div class="num">⌫</div></div>
+  </div>
+  <div class="login-error" id="login-error">PIN incorrecto. Intenta de nuevo.</div>
+</div>
 
 <!-- HEADER -->
 <div class="header">
@@ -1018,8 +1146,59 @@
     setTimeout(() => t.classList.remove('show'), 2500);
   }
 
-  // ── INIT ──
-  cargarTodo();
+
+  // ── PIN LOGIN ──
+  const PIN_CORRECTO = '2906'; // ← Cambia este PIN por el tuyo
+  let pinActual = '';
+  let pinBloqueado = false;
+
+  function pinPress(num) {
+    if (pinBloqueado || pinActual.length >= 4) return;
+    pinActual += num;
+    actualizarDots();
+    if (pinActual.length === 4) {
+      setTimeout(verificarPin, 150);
+    }
+  }
+
+  function pinDel() {
+    if (pinBloqueado) return;
+    pinActual = pinActual.slice(0, -1);
+    actualizarDots();
+  }
+
+  function actualizarDots() {
+    for (let i = 0; i < 4; i++) {
+      const dot = document.getElementById('dot-' + i);
+      dot.className = 'pin-dot' + (i < pinActual.length ? ' filled' : '');
+    }
+  }
+
+  function verificarPin() {
+    if (pinActual === PIN_CORRECTO) {
+      document.getElementById('login-screen').style.opacity = '0';
+      document.getElementById('login-screen').style.transition = 'opacity 0.4s';
+      setTimeout(() => {
+        document.getElementById('login-screen').style.display = 'none';
+        cargarTodo();
+      }, 400);
+    } else {
+      pinBloqueado = true;
+      for (let i = 0; i < 4; i++) {
+        document.getElementById('dot-' + i).className = 'pin-dot error';
+      }
+      document.getElementById('login-error').classList.add('show');
+      setTimeout(() => {
+        pinActual = '';
+        pinBloqueado = false;
+        actualizarDots();
+        document.getElementById('login-error').classList.remove('show');
+      }, 1200);
+    }
+  }
+
+  // ── INIT ── (cargarTodo() se llama desde verificarPin)
+
 </script>
 </body>
 </html>
