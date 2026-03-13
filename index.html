@@ -825,6 +825,13 @@
         </div>
       </div>
       <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+        <label style="font-size:13px;color:#94A3B8;flex:1;">🦷 Requiere aparato</label>
+        <div style="display:flex;align-items:center;gap:4px;">
+          <span style="color:#64748B;font-size:14px;">$</span>
+          <input id="pc_aparato" type="number" min="0" step="10" style="width:80px;background:#1A2744;border:1px solid #1E3A6E;border-radius:8px;padding:8px;color:#F1F5F9;font-size:14px;font-weight:700;text-align:right;outline:none;">
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
         <label style="font-size:13px;color:#94A3B8;flex:1;">🔴 VIP / Endo / Fractura</label>
         <div style="display:flex;align-items:center;gap:4px;">
           <span style="color:#64748B;font-size:14px;">$</span>
@@ -915,7 +922,7 @@
   let todos = [];
   let filtroActual = 'todos';
   let prospectoActivo = null;
-  let PRECIOS = { vip:1500, infantil_manana:200, infantil_tarde:130, extraccion_2:260, extraccion_3:390, general:130 };
+  let PRECIOS = { vip:1500, infantil_manana:200, infantil_tarde:130, extraccion_2:260, extraccion_3:390, aparato:250, general:130 };
 
   const ESTADOS = ['Disponible','Asignado','VIP','Garantia','Contactado','No respondio','Regalado','Sabado'];
 
@@ -936,11 +943,12 @@
     return map[e] || 'norespond';
   }
 
-  function getPrecio(trat, estado, extr, horarioMana, horarioTarde) {
+  function getPrecio(trat, estado, extr, horarioMana, horarioTarde, aparato) {
     const t = (trat || '').toLowerCase();
     if (estado === 'VIP') return '$' + PRECIOS.vip.toLocaleString();
     if (estado === 'Sabado') return 'GRATIS';
     if (t.match(/endo|nervio|fractura|frontal|oscuro|anterior/)) return '$' + PRECIOS.vip.toLocaleString();
+    if (aparato && String(aparato).trim()) return '$' + PRECIOS.aparato.toLocaleString();
     if (t.includes('infantil') || t.includes('niño') || t.includes('pedi')) {
       if (horarioMana && String(horarioMana).trim()) return '$' + PRECIOS.infantil_manana.toLocaleString();
       return '$' + PRECIOS.infantil_tarde.toLocaleString();
@@ -995,7 +1003,7 @@
           <div class="estado-badge ${badgeClass(p.estado)}">${p.estado}</div>
         </div>
         <div class="prow-trat">${(p.tratamiento||'').replace(/\.$/,'')}</div>
-        <div class="prow-meta">${getPrecio(p.tratamiento, p.estado, p.extracciones, p.horarioMana, p.horarioTarde)} · ${[p.horarioMana,p.horarioTarde].filter(Boolean).join('/')||'Sin horario'}</div>
+        <div class="prow-meta">${getPrecio(p.tratamiento, p.estado, p.extracciones, p.horarioMana, p.horarioTarde, p.aparato)} · ${[p.horarioMana,p.horarioTarde].filter(Boolean).join('/')||'Sin horario'}</div>
       </div>`).join('');
   }
 
@@ -1033,7 +1041,7 @@
   if (pagoEnviado.length > 0) {
     html += `<div style="font-size:13px;font-weight:600;color:#F59E0B;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px">Comprobantes por validar (${pagoEnviado.length})</div>`;
     pagoEnviado.forEach(p => {
-      const pc = getPrecio(p.tratamiento, p.estado === 'Pago enviado' ? 'Asignado' : p.estado, p.extracciones, p.horarioMana, p.horarioTarde);
+      const pc = getPrecio(p.tratamiento, p.estado === 'Pago enviado' ? 'Asignado' : p.estado, p.extracciones, p.horarioMana, p.horarioTarde, p.aparato);
       const ref = 'VIN-' + String(p.id).padStart(3,'0');
       const tieneComp = p.comprobante && p.comprobante.startsWith('data:');
       html += `
@@ -1057,7 +1065,7 @@
   if (asignados.length > 0) {
     html += `<div style="font-size:13px;font-weight:600;color:#64748B;margin:16px 0 12px;text-transform:uppercase;letter-spacing:0.5px">Asignados pendientes (${asignados.length})</div>`;
     asignados.forEach(p => {
-      const pc = getPrecio(p.tratamiento, p.estado, p.extracciones, p.horarioMana, p.horarioTarde);
+      const pc = getPrecio(p.tratamiento, p.estado, p.extracciones, p.horarioMana, p.horarioTarde, p.aparato);
       html += `<div class="card-item" style="margin-bottom:8px" onclick="abrirSheet(${JSON.stringify(p).replace(/"/g,'&quot;')})">
         <div style="display:flex;justify-content:space-between;align-items:center">
           <div><div style="font-weight:700">#${p.id} · ${p.tratamiento}</div><div style="font-size:13px;color:#94A3B8;margin-top:3px">${p.alumnoAsignado || 'Sin asignar'}</div></div>
@@ -1139,7 +1147,7 @@
   function renderResumen() {
     const asignados  = todos.filter(p => p.estado === 'Asignado' || p.estado === 'Regalado');
     const ingresos   = asignados.reduce((sum, p) => {
-      const pr = getPrecio(p.tratamiento, p.estado, p.extracciones, p.horarioMana, p.horarioTarde);
+      const pr = getPrecio(p.tratamiento, p.estado, p.extracciones, p.horarioMana, p.horarioTarde, p.aparato);
       const num = parseInt((pr||'0').replace(/[^0-9]/g,'')) || 0;
       return sum + num;
     }, 0);
@@ -1197,7 +1205,7 @@
       <div class="sh-row"><span class="sh-key">Horario</span><span class="sh-val">${[p.horarioMana,p.horarioTarde].filter(Boolean).join(' / ')||'No indicado'}</span></div>
       <div class="sh-row"><span class="sh-key">Expediente</span><span class="sh-val">${(p.expediente||'').includes('primera')?'Sin folio':'Con folio'}</span></div>
       ${p.extracciones?`<div class="sh-row"><span class="sh-key">Extracciones</span><span class="sh-val">${p.extracciones}</span></div>`:''}
-      <div class="sh-row"><span class="sh-key">Precio</span><span class="sh-val" style="color:#10B981;">${getPrecio(p.tratamiento,p.estado,p.extracciones,p.horarioMana,p.horarioTarde)}</span></div>
+      <div class="sh-row"><span class="sh-key">Precio</span><span class="sh-val" style="color:#10B981;">${getPrecio(p.tratamiento,p.estado,p.extracciones,p.horarioMana,p.horarioTarde,p.aparato)}</span></div>
       <div class="sh-row"><span class="sh-key">Estado actual</span><span class="sh-val"><span class="estado-badge ${badgeClass(p.estado)}">${p.estado}</span></span></div>
 
       <div style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-top:14px;margin-bottom:8px;">Cambiar estado</div>
@@ -1406,6 +1414,7 @@
     document.getElementById('pc_general').value         = PRECIOS.general;
     document.getElementById('pc_extraccion_2').value    = PRECIOS.extraccion_2;
     document.getElementById('pc_extraccion_3').value    = PRECIOS.extraccion_3;
+    document.getElementById('pc_aparato').value         = PRECIOS.aparato;
     document.getElementById('pc_vip').value             = PRECIOS.vip;
   }
 
@@ -1421,6 +1430,7 @@
         precio_infantil_tarde: document.getElementById('pc_infantil_tarde').value,
         precio_extraccion_2:   document.getElementById('pc_extraccion_2').value,
         precio_extraccion_3:   document.getElementById('pc_extraccion_3').value,
+        precio_aparato:        document.getElementById('pc_aparato').value,
         precio_general:        document.getElementById('pc_general').value,
       });
       const res  = await fetch(API + '?' + params.toString());
