@@ -1205,6 +1205,7 @@
       <div class="sh-row"><span class="sh-key">Horario</span><span class="sh-val">${[p.horarioMana,p.horarioTarde].filter(Boolean).join(' / ')||'No indicado'}</span></div>
       <div class="sh-row"><span class="sh-key">Expediente</span><span class="sh-val">${(p.expediente||'').includes('primera')?'Sin folio':'Con folio'}</span></div>
       ${p.extracciones?`<div class="sh-row"><span class="sh-key">Extracciones</span><span class="sh-val">${p.extracciones}</span></div>`:''}
+      ${(p.aparato && String(p.aparato).trim())?`<div class="sh-row"><span class="sh-key">Requiere aparato</span><span class="sh-val" style="color:#FCD34D;">🦷 Sí</span></div>`:''}
       <div class="sh-row"><span class="sh-key">Precio</span><span class="sh-val" style="color:#10B981;">${getPrecio(p.tratamiento,p.estado,p.extracciones,p.horarioMana,p.horarioTarde,p.aparato)}</span></div>
       <div class="sh-row"><span class="sh-key">Estado actual</span><span class="sh-val"><span class="estado-badge ${badgeClass(p.estado)}">${p.estado}</span></span></div>
 
