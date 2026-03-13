@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -916,7 +917,7 @@
 <div class="toast" id="toast"></div>
 
 <script>
-  const API = 'https://script.google.com/macros/s/AKfycbxputh4gccLqIjyB_THQH-TosFWwjmn6p-FPsUkoR59oAGNOX4KCaC_BB2kbGx5VS6IRA/exec';
+  const API = 'https://script.google.com/macros/s/AKfycbyG_CBD-GH8m1VDI_WgcGZYKdyUWQXxJrSYqWUFcVfCFRy5BJgDXPzWpf-EQSMPBm-hjg/exec';
 
   // ── ESTADO GLOBAL ──
   let todos = [];
@@ -943,11 +944,13 @@
     return map[e] || 'norespond';
   }
 
-  // Checkbox de Google Sheets llega como boolean true/false o string "true"/"TRUE"
+  // Detecta aparato: viene como boolean true/false desde el Apps Script
+  // o como texto del formulario "Sí, me indicaron que necesita un aparato..."
   function tieneAparato(val) {
-    if (val === true) return true;
     if (!val) return false;
-    return String(val).toLowerCase() === 'true';
+    if (val === true) return true;
+    const s = String(val).toLowerCase().trim();
+    return s === 'true' || s.charAt(0) === 's';
   }
 
   function getPrecio(trat, estado, extr, horarioMana, horarioTarde, aparato) {
