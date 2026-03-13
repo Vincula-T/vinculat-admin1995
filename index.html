@@ -943,12 +943,19 @@
     return map[e] || 'norespond';
   }
 
+  // Checkbox de Google Sheets llega como boolean true/false o string "true"/"TRUE"
+  function tieneAparato(val) {
+    if (val === true) return true;
+    if (!val) return false;
+    return String(val).toLowerCase() === 'true';
+  }
+
   function getPrecio(trat, estado, extr, horarioMana, horarioTarde, aparato) {
     const t = (trat || '').toLowerCase();
     if (estado === 'VIP') return '$' + PRECIOS.vip.toLocaleString();
     if (estado === 'Sabado') return 'GRATIS';
     if (t.match(/endo|nervio|fractura|frontal|oscuro|anterior/)) return '$' + PRECIOS.vip.toLocaleString();
-    if (aparato && String(aparato).trim()) return '$' + PRECIOS.aparato.toLocaleString();
+    if (tieneAparato(aparato)) return '$' + PRECIOS.aparato.toLocaleString();
     if (t.includes('infantil') || t.includes('niño') || t.includes('pedi')) {
       if (horarioMana && String(horarioMana).trim()) return '$' + PRECIOS.infantil_manana.toLocaleString();
       return '$' + PRECIOS.infantil_tarde.toLocaleString();
@@ -1205,7 +1212,7 @@
       <div class="sh-row"><span class="sh-key">Horario</span><span class="sh-val">${[p.horarioMana,p.horarioTarde].filter(Boolean).join(' / ')||'No indicado'}</span></div>
       <div class="sh-row"><span class="sh-key">Expediente</span><span class="sh-val">${(p.expediente||'').includes('primera')?'Sin folio':'Con folio'}</span></div>
       ${p.extracciones?`<div class="sh-row"><span class="sh-key">Extracciones</span><span class="sh-val">${p.extracciones}</span></div>`:''}
-      ${(p.aparato && String(p.aparato).trim())?`<div class="sh-row"><span class="sh-key">Requiere aparato</span><span class="sh-val" style="color:#FCD34D;">🦷 Sí</span></div>`:''}
+      ${tieneAparato(p.aparato)?`<div class="sh-row"><span class="sh-key">Requiere aparato</span><span class="sh-val" style="color:#FCD34D;">🦷 Sí</span></div>`:''}
       <div class="sh-row"><span class="sh-key">Precio</span><span class="sh-val" style="color:#10B981;">${getPrecio(p.tratamiento,p.estado,p.extracciones,p.horarioMana,p.horarioTarde,p.aparato)}</span></div>
       <div class="sh-row"><span class="sh-key">Estado actual</span><span class="sh-val"><span class="estado-badge ${badgeClass(p.estado)}">${p.estado}</span></span></div>
 
