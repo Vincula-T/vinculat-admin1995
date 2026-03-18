@@ -23,7 +23,6 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'DM Sans', sans-serif; background: var(--navy); color: var(--text); min-height: 100vh; padding-bottom: 60px; max-width: 600px; margin: 0 auto; position: relative; }
   
-  /* HEADER */
   .header { background: linear-gradient(135deg, #0F1E3A 0%, #1A2744 100%); padding: 20px 20px 16px; position: sticky; top: 0; z-index: 50; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
   .logo { display: flex; align-items: center; gap: 10px; }
   .logo-icon { width: 38px; height: 38px; background: linear-gradient(135deg, var(--red), var(--amber)); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
@@ -31,22 +30,16 @@
   .logo-text span { color: var(--red); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; display: block; margin-top: -2px; }
   
   .btn-refresh { background: var(--blue); border: none; color: white; padding: 8px 14px; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer; display: flex; gap: 6px; align-items: center; }
-  .btn-refresh:active { transform: scale(0.95); }
-
-  /* TABS NAV */
   .nav-tabs { display: flex; overflow-x: auto; padding: 12px 16px 0; gap: 10px; border-bottom: 1px solid var(--border); scrollbar-width: none; }
   .nav-tabs::-webkit-scrollbar { display: none; }
   .tab-btn { background: transparent; border: none; color: var(--muted); padding: 10px 12px; font-size: 14px; font-weight: 700; white-space: nowrap; border-bottom: 3px solid transparent; cursor: pointer; transition: 0.2s; }
   .tab-btn.active { color: white; border-bottom-color: var(--blue); }
   .tab-badge { background: var(--red); color: white; font-size: 10px; padding: 2px 6px; border-radius: 10px; margin-left: 4px; display: none; }
-
-  /* MAIN CONTENT */
   .tab-content { display: none; padding: 20px 16px; }
   .tab-content.active { display: block; }
   .empty { text-align: center; padding: 40px 20px; color: var(--muted); }
   .empty .ei { font-size: 40px; margin-bottom: 10px; opacity: 0.5; }
 
-  /* CARDS */
   .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 12px; cursor: pointer; position: relative; overflow: hidden; }
   .card-top { display: flex; justify-content: space-between; margin-bottom: 8px; }
   .card-id { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 12px; color: var(--muted); }
@@ -54,13 +47,11 @@
   .card-meta { display: flex; flex-wrap: wrap; gap: 6px; font-size: 11px; color: #94A3B8; margin-bottom: 12px; }
   .meta-tag { background: rgba(255,255,255,0.05); padding: 4px 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05); }
   
-  /* ESTADOS COLORS */
   .st-pago { color: #FCD34D; font-weight: 700; font-size: 13px; display: flex; align-items: center; gap: 5px; }
   .st-disponible { color: #34D399; font-weight: 700; font-size: 13px;}
   .st-vip { color: #F87171; font-weight: 700; font-size: 13px;}
   .st-garantia { color: #FCD34D; font-weight: 700; font-size: 13px;}
 
-  /* DETALLE MODAL */
   .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.3s; display: flex; align-items: flex-end; justify-content: center; }
   .modal-overlay.active { opacity: 1; pointer-events: all; }
   .modal-box { background: var(--navy2); width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; border-radius: 24px 24px 0 0; padding: 20px; transform: translateY(100%); transition: transform 0.3s; position: relative; }
@@ -71,24 +62,20 @@
   .detail-row .lbl { color: var(--muted); font-size: 13px; }
   .detail-row .val { font-weight: 600; text-align: right; max-width: 65%; }
   
-  /* COMPS PAGO */
   .comp-box { background: #0A1628; border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin: 16px 0; text-align: center; }
   .comp-img { max-width: 100%; border-radius: 8px; margin-top: 10px; border: 1px solid var(--border); }
-  
   .btn-action { width: 100%; padding: 14px; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; font-family: 'DM Sans', sans-serif; cursor: pointer; margin-top: 10px; display: flex; justify-content: center; gap: 8px; }
   .btn-green { background: var(--green); color: #064E3B; }
   .btn-red { background: transparent; border: 1px solid var(--red); color: var(--red); }
   
   .admin-select { width: 100%; background: var(--card); color: white; border: 1px solid var(--border); padding: 14px; border-radius: 12px; font-size: 15px; font-family: 'DM Sans', sans-serif; margin-top: 12px; outline: none; }
   
-  /* FORM PRECIOS */
   .config-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--border); }
   .config-lbl { font-size: 14px; color: white; font-weight: 600; }
   .config-sub { font-size: 11px; color: var(--muted); display: block; margin-top: 2px; }
   .config-input { width: 90px; background: var(--navy); border: 1px solid var(--border); color: var(--green); font-size: 16px; font-weight: 700; padding: 8px; border-radius: 8px; text-align: right; font-family: 'Syne', sans-serif; }
   .btn-save-prices { width: 100%; padding: 16px; background: var(--blue); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 700; margin-top: 24px; cursor: pointer; }
 
-  /* LIGHTBOX */
   #lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 999; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
   #lightbox-img { max-width: 90%; max-height: 85vh; border-radius: 12px; object-fit: contain; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
   .lightbox-close { position: absolute; top: 20px; right: 20px; background: none; border: none; color: white; font-size: 32px; cursor: pointer; line-height: 1; }
@@ -125,7 +112,6 @@
 <div id="tab-precios" class="tab-content">
   <h2 style="font-family:'Syne', sans-serif; margin-bottom: 6px;">Configuración de Costos</h2>
   <p style="color:var(--muted); font-size:13px; margin-bottom:20px; line-height:1.5;">Ajusta las tarifas del sistema. Los alumnos verán estos precios actualizados automáticamente.</p>
-  
   <div id="form-precios"></div>
   <button class="btn-save-prices" onclick="guardarPrecios()" id="btn-save-prices">💾 Guardar Precios</button>
 </div>
@@ -148,7 +134,6 @@
   const API_URL = 'https://script.google.com/macros/s/AKfycbwPDQoVUqbrJwob52woIh2Kg2DoV8Z3z5JAY6-rOg8Tnpl71AO5y2wfPYQAfDjcoCdICw/exec';
   let prospectosCache = [];
   let prospectoSeleccionado = null;
-
   let PRECIOS = { vip:1500, infantil_manana:200, infantil_tarde:130, extraccion_2:260, extraccion_3:390, aparato:250, general:130 };
 
   function esCasoPremium(trat, estado) {
@@ -199,13 +184,11 @@
     }
 
     if (tieneAparato(aparato)) return { monto: '$' + PRECIOS.aparato.toLocaleString(), clase: 'normal' };
-
     const n = contarExtracciones(extr);
     if (t.includes('extrac') || t.includes('sacar') || t.includes('muela') || t.includes('juicio')) {
       if (n >= 3) return { monto: '$' + PRECIOS.extraccion_3.toLocaleString(), clase: 'normal' };
       if (n >= 2) return { monto: '$' + PRECIOS.extraccion_2.toLocaleString(), clase: 'normal' };
     }
-
     return { monto: '$' + PRECIOS.general.toLocaleString(), clase: 'normal' };
   }
 
@@ -221,7 +204,6 @@
     return '🦷';
   }
 
-  // ── INIT ──
   async function cargarDatos() {
     const btn = document.getElementById('btn-sync');
     const txt = document.getElementById('txt-sync');
@@ -236,51 +218,34 @@
       prospectosCache = json.data.reverse();
       if (json.precios) PRECIOS = json.precios;
       renderTodos();
-      renderPrecios(); // Dibuja la pestaña de precios
+      renderPrecios(); 
       mostrarToast('Base de datos actualizada');
-    } catch(e) {
-      alert('Error de conexión. Reintenta.');
-    } finally {
-      btn.style.opacity = '1';
-      txt.textContent = 'Actualizar';
-    }
+    } catch(e) { alert('Error de conexión. Reintenta.'); } 
+    finally { btn.style.opacity = '1'; txt.textContent = 'Actualizar'; }
   }
 
-  // ── RENDER TABS ──
   function renderTodos() {
     const pPagos = prospectosCache.filter(p => p.estado === 'Pago enviado');
     document.getElementById('badge-pagos').textContent = pPagos.length;
     document.getElementById('badge-pagos').style.display = pPagos.length > 0 ? 'inline-block' : 'none';
     const divPagos = document.getElementById('tab-pendientes');
-    if (pPagos.length === 0) {
-      divPagos.innerHTML = `<div class="empty"><div class="ei">✅</div><p>No hay pagos pendientes de validar.</p></div>`;
-    } else {
-      divPagos.innerHTML = `<h2>⚠️ Pagos por Validar</h2><p style="color:#94A3B8; font-size:14px; margin-bottom:16px;">Revisa el comprobante y aprueba para liberar los datos.</p>` + pPagos.map(buildCard).join('');
-    }
+    if (pPagos.length === 0) divPagos.innerHTML = `<div class="empty"><div class="ei">✅</div><p>No hay pagos pendientes de validar.</p></div>`;
+    else divPagos.innerHTML = `<h2>⚠️ Pagos por Validar</h2><p style="color:#94A3B8; font-size:14px; margin-bottom:16px;">Revisa el comprobante y aprueba para liberar los datos.</p>` + pPagos.map(buildCard).join('');
 
     const pActivos = prospectosCache.filter(p => ['Disponible', 'VIP', 'Sabado'].includes(p.estado));
     const divActivos = document.getElementById('tab-activos');
-    if (pActivos.length === 0) {
-      divActivos.innerHTML = `<div class="empty"><div class="ei">👻</div><p>No hay pacientes activos en el portal.</p></div>`;
-    } else {
-      divActivos.innerHTML = `<h2>🟢 En Portal de Alumnos</h2><p style="color:#94A3B8; font-size:14px; margin-bottom:16px;">Pacientes que los alumnos están viendo actualmente.</p>` + pActivos.map(buildCard).join('');
-    }
+    if (pActivos.length === 0) divActivos.innerHTML = `<div class="empty"><div class="ei">👻</div><p>No hay pacientes activos en el portal.</p></div>`;
+    else divActivos.innerHTML = `<h2>🟢 En Portal de Alumnos</h2><p style="color:#94A3B8; font-size:14px; margin-bottom:16px;">Pacientes que los alumnos están viendo actualmente.</p>` + pActivos.map(buildCard).join('');
 
     const pGar = prospectosCache.filter(p => p.estado === 'Garantia');
     const divGar = document.getElementById('tab-garantias');
-    if (pGar.length === 0) {
-      divGar.innerHTML = `<div class="empty"><div class="ei">🙌</div><p>No has asignado pacientes como reposición recientemente.</p></div>`;
-    } else {
-      divGar.innerHTML = `<h2>🟠 Reposiciones (Garantía)</h2><p style="color:#94A3B8; font-size:14px; margin-bottom:16px;">Prospectos entregados sin costo como reposición.</p>` + pGar.map(buildCard).join('');
-    }
+    if (pGar.length === 0) divGar.innerHTML = `<div class="empty"><div class="ei">🙌</div><p>No has asignado pacientes como reposición recientemente.</p></div>`;
+    else divGar.innerHTML = `<h2>🟠 Reposiciones (Garantía)</h2><p style="color:#94A3B8; font-size:14px; margin-bottom:16px;">Prospectos entregados sin costo como reposición.</p>` + pGar.map(buildCard).join('');
 
     const pHist = prospectosCache.filter(p => ['Asignado', 'Contactado', 'No respondio', 'Regalado'].includes(p.estado));
     const divHist = document.getElementById('tab-historial');
-    if (pHist.length === 0) {
-      divHist.innerHTML = `<div class="empty"><div class="ei">🗄️</div><p>El historial está vacío.</p></div>`;
-    } else {
-      divHist.innerHTML = `<h2>🗄️ Historial Reciente</h2><p style="color:#94A3B8; font-size:14px; margin-bottom:16px;">Últimos prospectos vendidos o procesados.</p>` + pHist.map(buildCard).join('');
-    }
+    if (pHist.length === 0) divHist.innerHTML = `<div class="empty"><div class="ei">🗄️</div><p>El historial está vacío.</p></div>`;
+    else divHist.innerHTML = `<h2>🗄️ Historial Reciente</h2><p style="color:#94A3B8; font-size:14px; margin-bottom:16px;">Últimos prospectos vendidos o procesados.</p>` + pHist.map(buildCard).join('');
   }
 
   function buildCard(p) {
@@ -299,18 +264,14 @@
 
     return `
       <div class="card" onclick="abrirDetalle('${p.id}')">
-        <div class="card-top">
-          <div class="card-id">${p.id}</div>
-          ${stHtml}
-        </div>
+        <div class="card-top"><div class="card-id">${p.id}</div>${stHtml}</div>
         <div class="card-title">${getIcono(p.tratamiento)} ${String(p.tratamiento||'').replace(/\.$/,'')}</div>
         <div class="card-meta">
           ${p.alumnoAsignado ? `<span class="meta-tag" style="color:#FCD34D;">👤 ${p.alumnoAsignado}</span>` : ''}
           ${badgeFoto}
           <span class="meta-tag">🕐 ${p.horario || 'N/A'}</span>
         </div>
-      </div>
-    `;
+      </div>`;
   }
 
   function switchTab(tabId, btn) {
@@ -320,60 +281,51 @@
     btn.classList.add('active');
   }
 
-  // ── PRECIOS Y CONFIGURACIÓN ──
   function renderPrecios() {
     const html = `
-      <div class="config-row"><div><div class="config-lbl">Tarifa General</div><span class="config-sub">Resinas, limpiezas, extracciones (1)</span></div>
-        <input type="number" id="precio_general" class="config-input" value="${PRECIOS.general}"></div>
-      <div class="config-row"><div><div class="config-lbl">Casos Premium (VIP)</div><span class="config-sub">Endodoncias y fracturas frontales</span></div>
-        <input type="number" id="precio_vip" class="config-input" value="${PRECIOS.vip}"></div>
-      <div class="config-row"><div><div class="config-lbl">Infantil (Tarde)</div><span class="config-sub">Pacientes niños turno tarde</span></div>
-        <input type="number" id="precio_infantil_tarde" class="config-input" value="${PRECIOS.infantil_tarde}"></div>
-      <div class="config-row"><div><div class="config-lbl">Infantil (Mañana)</div><span class="config-sub">Pacientes niños turno mañana</span></div>
-        <input type="number" id="precio_infantil_manana" class="config-input" value="${PRECIOS.infantil_manana}"></div>
-      <div class="config-row"><div><div class="config-lbl">Extracciones (2)</div><span class="config-sub">Pacientes que requieren 2 extracciones</span></div>
-        <input type="number" id="precio_extraccion_2" class="config-input" value="${PRECIOS.extraccion_2}"></div>
-      <div class="config-row"><div><div class="config-lbl">Extracciones (3 o más)</div><span class="config-sub">Múltiples extracciones complejas</span></div>
-        <input type="number" id="precio_extraccion_3" class="config-input" value="${PRECIOS.extraccion_3}"></div>
-      <div class="config-row" style="border:none"><div><div class="config-lbl">Ortodoncia / Aparatos</div><span class="config-sub">Arco lingual, mantenedores, etc.</span></div>
-        <input type="number" id="precio_aparato" class="config-input" value="${PRECIOS.aparato}"></div>
+      <div class="config-row"><div><div class="config-lbl">Tarifa General</div><span class="config-sub">Resinas, limpiezas, extracciones (1)</span></div><input type="number" id="precio_general" class="config-input" value="${PRECIOS.general}"></div>
+      <div class="config-row"><div><div class="config-lbl">Casos Premium (VIP)</div><span class="config-sub">Endodoncias y fracturas frontales</span></div><input type="number" id="precio_vip" class="config-input" value="${PRECIOS.vip}"></div>
+      <div class="config-row"><div><div class="config-lbl">Infantil (Tarde)</div><span class="config-sub">Pacientes niños turno tarde</span></div><input type="number" id="precio_infantil_tarde" class="config-input" value="${PRECIOS.infantil_tarde}"></div>
+      <div class="config-row"><div><div class="config-lbl">Infantil (Mañana)</div><span class="config-sub">Pacientes niños turno mañana</span></div><input type="number" id="precio_infantil_manana" class="config-input" value="${PRECIOS.infantil_manana}"></div>
+      <div class="config-row"><div><div class="config-lbl">Extracciones (2)</div><span class="config-sub">Pacientes que requieren 2 extracciones</span></div><input type="number" id="precio_extraccion_2" class="config-input" value="${PRECIOS.extraccion_2}"></div>
+      <div class="config-row"><div><div class="config-lbl">Extracciones (3 o más)</div><span class="config-sub">Múltiples extracciones complejas</span></div><input type="number" id="precio_extraccion_3" class="config-input" value="${PRECIOS.extraccion_3}"></div>
+      <div class="config-row" style="border:none"><div><div class="config-lbl">Ortodoncia / Aparatos</div><span class="config-sub">Arco lingual, mantenedores, etc.</span></div><input type="number" id="precio_aparato" class="config-input" value="${PRECIOS.aparato}"></div>
     `;
     document.getElementById('form-precios').innerHTML = html;
   }
 
   async function guardarPrecios() {
     const btn = document.getElementById('btn-save-prices');
-    btn.style.opacity = '0.6';
-    btn.textContent = 'Guardando...';
-
-    const payload = [
-      'accion=setPrecios',
-      'precio_general=' + document.getElementById('precio_general').value,
-      'precio_vip=' + document.getElementById('precio_vip').value,
-      'precio_infantil_tarde=' + document.getElementById('precio_infantil_tarde').value,
-      'precio_infantil_manana=' + document.getElementById('precio_infantil_manana').value,
-      'precio_extraccion_2=' + document.getElementById('precio_extraccion_2').value,
-      'precio_extraccion_3=' + document.getElementById('precio_extraccion_3').value,
-      'precio_aparato=' + document.getElementById('precio_aparato').value
-    ].join('&');
-
+    btn.style.opacity = '0.6'; btn.textContent = 'Guardando...';
+    const payload = ['accion=setPrecios', 'precio_general=' + document.getElementById('precio_general').value, 'precio_vip=' + document.getElementById('precio_vip').value, 'precio_infantil_tarde=' + document.getElementById('precio_infantil_tarde').value, 'precio_infantil_manana=' + document.getElementById('precio_infantil_manana').value, 'precio_extraccion_2=' + document.getElementById('precio_extraccion_2').value, 'precio_extraccion_3=' + document.getElementById('precio_extraccion_3').value, 'precio_aparato=' + document.getElementById('precio_aparato').value].join('&');
     try {
       const res = await fetch(API_URL + '?' + payload);
       const json = await res.json();
-      if(json.ok) {
-        PRECIOS = json.precios;
-        renderTodos();
-        mostrarToast('Precios actualizados');
-      }
-    } catch(e) {
-      alert('Error al guardar precios');
-    } finally {
-      btn.style.opacity = '1';
-      btn.textContent = '💾 Guardar Precios';
-    }
+      if(json.ok) { PRECIOS = json.precios; renderTodos(); mostrarToast('Precios actualizados'); }
+    } catch(e) { alert('Error al guardar precios'); } 
+    finally { btn.style.opacity = '1'; btn.textContent = '💾 Guardar Precios'; }
   }
 
-  // ── MODAL DETALLE ADMIN (CORREGIDO PARA NÚMEROS) ──
+  // ── FUNCIÓN PARA ENVIAR DATOS POR WHATSAPP AL ALUMNO ──
+  function enviarDatosAlumno(id) {
+    const p = prospectosCache.find(x => String(x.id).trim() === String(id).trim());
+    if (!p || !p.telAlumno) return;
+    
+    const telAlumno = String(p.telAlumno).replace(/\D/g, '');
+    const telPaciente = String(p.telefono).replace(/\D/g, '');
+    
+    let mensaje = `🦷 *¡Hola ${p.alumnoAsignado}!* Tu pago ha sido validado.\n\nAquí tienes los datos de tu paciente:\n\n`;
+    mensaje += `👤 *Paciente:* ${p.nombre}\n`;
+    mensaje += `📞 *Teléfono:* ${p.telefono}\n`;
+    mensaje += `👉 *Link WA:* https://wa.me/52${telPaciente}\n\n`;
+    mensaje += `🔧 *Tratamiento:* ${p.tratamiento}\n`;
+    mensaje += `🕐 *Horario preferido:* ${p.horario || 'A definir'}\n`;
+    if(p.expediente) mensaje += `📁 *Expediente:* ${p.expediente}\n`;
+    mensaje += `\n¡Mucho éxito en clínica!`;
+    
+    window.open(`https://wa.me/52${telAlumno}?text=${encodeURIComponent(mensaje)}`, '_blank');
+  }
+
   function abrirDetalle(id) {
     const p = prospectosCache.find(x => String(x.id).trim() === String(id).trim());
     if (!p) return;
@@ -381,8 +333,8 @@
     
     const isPrem = esCasoPremium(p.tratamiento, p.estado);
     const precio = getPrecio(p.tratamiento, p.estado, p.extracciones, p.horario, p.aparato, p.edad);
+    const telLimpio = String(p.telefono || '').replace(/\D/g, '');
 
-    // Render de múltiples fotos
     let fotosHtml = '';
     if (p.foto) {
       const fotosArr = String(p.foto).split('|').map(u => u.trim()).filter(u => u.length > 0);
@@ -390,12 +342,10 @@
         let safeUrl = urlRaw.replace('http:', 'https:');
         const matchId = safeUrl.match(/[?&]id=([a-zA-Z0-9_-]{25,})/);
         if (matchId) safeUrl = 'https://drive.google.com/uc?export=view&id=' + matchId[1];
-        
         fotosHtml += `
         <div style="margin-top:12px;border-radius:12px;overflow:hidden;cursor:pointer;position:relative;border:1px solid var(--border);" onclick="abrirLightbox('${safeUrl}')">
           <img src="${safeUrl}" alt="Foto ${index + 1}" style="width:100%;max-height:220px;object-fit:cover;display:block;" onerror="this.parentElement.style.display='none'">
           <div style="position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,0.6);color:white;font-size:11px;padding:4px 8px;border-radius:6px;">🔍 Ampliar</div>
-          <div style="position:absolute;top:8px;left:8px;background:rgba(14,165,233,0.8);color:white;font-size:11px;font-weight:700;padding:4px 8px;border-radius:6px;">📷 Foto Paciente ${index + 1} de ${fotosArr.length}</div>
         </div>`;
       });
     }
@@ -405,18 +355,27 @@
       let compUrl = String(p.comprobante).replace('http:', 'https:');
       const mC = compUrl.match(/[?&]id=([a-zA-Z0-9_-]{25,})/);
       if (mC) compUrl = 'https://drive.google.com/uc?export=view&id=' + mC[1];
-
       compHtml = `
         <div class="comp-box">
           <div style="font-size:12px; color:var(--muted); text-transform:uppercase; font-weight:700;">Comprobante de Pago</div>
           <div style="font-size:16px; color:#10B981; font-weight:800; font-family:'Syne',sans-serif; margin-top:4px;">Ref: ${p.refPago || 'N/A'}</div>
           <img src="${compUrl}" class="comp-img" onclick="abrirLightbox('${compUrl}')" style="cursor:pointer;">
-        </div>
-      `;
+        </div>`;
     }
 
-    // EL BLINDAJE: Convertir teléfono a string antes de hacer replace
-    const telLimpio = String(p.telefono || '').replace(/\D/g, '');
+    // BLOQUE DATOS DE ASIGNACIÓN (Incluye el botón de enviar WhatsApp)
+    let infoAlumnoHtml = '';
+    if (p.alumnoAsignado) {
+      const telAlumnoLimpio = String(p.telAlumno || '').replace(/\D/g, '');
+      infoAlumnoHtml = `
+        <h3 style="font-size:12px; color:var(--blue); text-transform:uppercase; margin-top:20px; margin-bottom:8px; letter-spacing:1px;">Datos de Asignación</h3>
+        <div class="detail-row"><span class="lbl">Alumno:</span><span class="val" style="color:#FCD34D;">${p.alumnoAsignado}</span></div>
+        ${p.telAlumno ? `
+          <div class="detail-row"><span class="lbl">Tel. Alumno:</span><span class="val"><a href="https://wa.me/52${telAlumnoLimpio}" target="_blank" style="color:#10B981;font-weight:700;">📞 ${p.telAlumno}</a></span></div>
+          <button class="btn-action" style="background:#25D366; color:white; border:none; margin-top:12px;" onclick="enviarDatosAlumno('${p.id}')">📲 Enviar paciente al Alumno</button>
+        ` : `<div class="detail-row"><span class="lbl">Tel. Alumno:</span><span class="val">No registrado</span></div>`}
+      `;
+    }
 
     document.getElementById('detalle-content').innerHTML = `
       <h2 style="font-family:'Syne', sans-serif; margin-bottom: 2px;">${p.id}</h2>
@@ -425,6 +384,8 @@
       <div class="detail-row"><span class="lbl">Estado:</span><span class="val" style="color:${isPrem?'#F87171':'#34D399'}">${isPrem ? 'Premium' : p.estado}</span></div>
       <div class="detail-row"><span class="lbl">Precio Calculado:</span><span class="val" style="color:#FCD34D;">${precio.monto}</span></div>
       
+      ${infoAlumnoHtml}
+
       <h3 style="font-size:12px; color:var(--blue); text-transform:uppercase; margin-top:20px; margin-bottom:8px; letter-spacing:1px;">Datos Ocultos (Privados)</h3>
       <div class="detail-row"><span class="lbl">Nombre:</span><span class="val">${p.nombre || 'N/A'}</span></div>
       <div class="detail-row"><span class="lbl">Teléfono:</span><span class="val"><a href="https://wa.me/52${telLimpio}" target="_blank" style="color:var(--blue);text-decoration:none;font-weight:700;">📞 ${p.telefono || 'N/A'}</a></span></div>
@@ -456,7 +417,6 @@
         <button class="btn-action btn-red" onclick="cambiarEstadoAdmin('${p.id}', 'Disponible')">❌ Rechazar Pago (Liberar)</button>
       `;
     }
-    
     return `
       <select id="select-estado-${p.id}" class="admin-select" onchange="document.getElementById('btn-guardar-${p.id}').style.display='block'">
         <option value="Disponible" ${p.estado==='Disponible'&&!esCasoPremium(p.tratamiento,p.estado)?'selected':''}>Disponible</option>
@@ -472,23 +432,15 @@
     `;
   }
 
-  // ── ACCIONES ──
   function cerrarModal() { document.getElementById('modal-detalle').classList.remove('active'); }
 
   async function cambiarEstadoAdmin(id, nuevoEstado) {
-    cerrarModal();
-    mostrarToast('Actualizando...');
-    try {
-      await fetch(API_URL + '?accion=cambiarEstado&id=' + encodeURIComponent(id) + '&estado=' + encodeURIComponent(nuevoEstado));
-      await cargarDatos();
-    } catch(e) { alert('Error al actualizar'); }
+    cerrarModal(); mostrarToast('Actualizando...');
+    try { await fetch(API_URL + '?accion=cambiarEstado&id=' + encodeURIComponent(id) + '&estado=' + encodeURIComponent(nuevoEstado)); await cargarDatos(); } 
+    catch(e) { alert('Error al actualizar'); }
   }
 
-  function aprobarPago(id) {
-    if (confirm('¿Confirmas que el pago es correcto y el prospecto pasará a ASIGNADO?')) {
-      cambiarEstadoAdmin(id, 'Asignado');
-    }
-  }
+  function aprobarPago(id) { if (confirm('¿Confirmas que el pago es correcto y el prospecto pasará a ASIGNADO?')) cambiarEstadoAdmin(id, 'Asignado'); }
 
   function accionGuardarCambios(id) {
     const selector = document.getElementById('select-estado-' + id);
@@ -497,25 +449,10 @@
     if (confirm(`¿Cambiar estado a "${nuevo}"?`)) cambiarEstadoAdmin(id, nuevo);
   }
 
-  function mostrarToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 2500);
-  }
+  function mostrarToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2500); }
+  function abrirLightbox(url) { const lb = document.getElementById('lightbox'); document.getElementById('lightbox-img').src = url; lb.style.opacity = '1'; lb.style.pointerEvents = 'all'; }
+  function cerrarLightbox() { const lb = document.getElementById('lightbox'); lb.style.opacity = '0'; lb.style.pointerEvents = 'none'; document.getElementById('lightbox-img').src = ''; }
 
-  function abrirLightbox(url) {
-    const lb = document.getElementById('lightbox');
-    document.getElementById('lightbox-img').src = url;
-    lb.style.opacity = '1'; lb.style.pointerEvents = 'all';
-  }
-  function cerrarLightbox() {
-    const lb = document.getElementById('lightbox');
-    lb.style.opacity = '0'; lb.style.pointerEvents = 'none';
-    document.getElementById('lightbox-img').src = '';
-  }
-
-  // INICIAR
   cargarDatos();
 </script>
 
