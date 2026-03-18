@@ -14,8 +14,6 @@
     --green:   #10B981;
     --amber:   #F59E0B;
     --red:     #EF4444;
-    --purple:  #8B5CF6;
-    --gold:    #F59E0B;
     --surface: #111827;
     --card:    #1A2744;
     --border:  #1E3A6E;
@@ -38,7 +36,7 @@
   /* TABS NAV */
   .nav-tabs { display: flex; overflow-x: auto; padding: 12px 16px 0; gap: 10px; border-bottom: 1px solid var(--border); scrollbar-width: none; }
   .nav-tabs::-webkit-scrollbar { display: none; }
-  .tab-btn { background: transparent; border: none; color: var(--muted); padding: 10px 12px; font-size: 14px; font-weight: 700; white-space: nowrap; border-bottom: 3px solid transparent; cursor: pointer; }
+  .tab-btn { background: transparent; border: none; color: var(--muted); padding: 10px 12px; font-size: 14px; font-weight: 700; white-space: nowrap; border-bottom: 3px solid transparent; cursor: pointer; transition: 0.2s; }
   .tab-btn.active { color: white; border-bottom-color: var(--blue); }
   .tab-badge { background: var(--red); color: white; font-size: 10px; padding: 2px 6px; border-radius: 10px; margin-left: 4px; display: none; }
 
@@ -55,8 +53,6 @@
   .card-title { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; line-height: 1.3; margin-bottom: 8px; }
   .card-meta { display: flex; flex-wrap: wrap; gap: 6px; font-size: 11px; color: #94A3B8; margin-bottom: 12px; }
   .meta-tag { background: rgba(255,255,255,0.05); padding: 4px 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05); }
-  
-  .card-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 12px; margin-top: 4px; }
   
   /* ESTADOS COLORS */
   .st-pago { color: #FCD34D; font-weight: 700; font-size: 13px; display: flex; align-items: center; gap: 5px; }
@@ -85,12 +81,18 @@
   
   .admin-select { width: 100%; background: var(--card); color: white; border: 1px solid var(--border); padding: 14px; border-radius: 12px; font-size: 15px; font-family: 'DM Sans', sans-serif; margin-top: 12px; outline: none; }
   
-  /* LIGHTBOX PARA FOTOS */
+  /* FORM PRECIOS */
+  .config-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--border); }
+  .config-lbl { font-size: 14px; color: white; font-weight: 600; }
+  .config-sub { font-size: 11px; color: var(--muted); display: block; margin-top: 2px; }
+  .config-input { width: 90px; background: var(--navy); border: 1px solid var(--border); color: var(--green); font-size: 16px; font-weight: 700; padding: 8px; border-radius: 8px; text-align: right; font-family: 'Syne', sans-serif; }
+  .btn-save-prices { width: 100%; padding: 16px; background: var(--blue); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 700; margin-top: 24px; cursor: pointer; }
+
+  /* LIGHTBOX */
   #lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 999; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
   #lightbox-img { max-width: 90%; max-height: 85vh; border-radius: 12px; object-fit: contain; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
   .lightbox-close { position: absolute; top: 20px; right: 20px; background: none; border: none; color: white; font-size: 32px; cursor: pointer; line-height: 1; }
 
-  .loading-msg { text-align: center; padding: 40px; color: var(--blue); font-weight: 700; }
   .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background: #34D399; color: #064E3B; padding: 12px 24px; border-radius: 100px; font-weight: 700; font-size: 14px; transition: transform 0.3s; z-index: 1000; box-shadow: 0 10px 25px rgba(52,211,153,0.4); }
   .toast.show { transform: translateX(-50%) translateY(0); }
 </style>
@@ -108,21 +110,25 @@
 </div>
 
 <div class="nav-tabs">
-  <button class="tab-btn active" onclick="switchTab('pendientes', this)">
-    💰 Pagos <span class="tab-badge" id="badge-pagos" style="display:inline-block">0</span>
-  </button>
+  <button class="tab-btn active" onclick="switchTab('pendientes', this)">💰 Pagos <span class="tab-badge" id="badge-pagos">0</span></button>
   <button class="tab-btn" onclick="switchTab('activos', this)">🟢 Activos</button>
   <button class="tab-btn" onclick="switchTab('garantias', this)">🟠 Garantías</button>
   <button class="tab-btn" onclick="switchTab('historial', this)">🗄️ Historial</button>
+  <button class="tab-btn" onclick="switchTab('precios', this)">⚙️ Precios</button>
 </div>
 
-<div id="tab-pendientes" class="tab-content active">
-  <div class="empty"><div class="ei">⏳</div><p>Cargando datos del sistema...</p></div>
-</div>
-
+<div id="tab-pendientes" class="tab-content active"><div class="empty"><div class="ei">⏳</div><p>Cargando datos del sistema...</p></div></div>
 <div id="tab-activos" class="tab-content"></div>
 <div id="tab-garantias" class="tab-content"></div>
 <div id="tab-historial" class="tab-content"></div>
+
+<div id="tab-precios" class="tab-content">
+  <h2 style="font-family:'Syne', sans-serif; margin-bottom: 6px;">Configuración de Costos</h2>
+  <p style="color:var(--muted); font-size:13px; margin-bottom:20px; line-height:1.5;">Ajusta las tarifas del sistema. Los alumnos verán estos precios actualizados automáticamente.</p>
+  
+  <div id="form-precios"></div>
+  <button class="btn-save-prices" onclick="guardarPrecios()" id="btn-save-prices">💾 Guardar Precios</button>
+</div>
 
 <div class="modal-overlay" id="modal-detalle" onclick="if(event.target===this) cerrarModal()">
   <div class="modal-box">
@@ -143,12 +149,11 @@
   let prospectosCache = [];
   let prospectoSeleccionado = null;
 
-  // ── REGLAS DE PRECIOS GLOBALES (Sincronizado con Alumnos) ──
   let PRECIOS = { vip:1500, infantil_manana:200, infantil_tarde:130, extraccion_2:260, extraccion_3:390, aparato:250, general:130 };
 
   function esCasoPremium(trat, estado) {
     if (estado === 'VIP') return true;
-    const t = (trat || '').toLowerCase();
+    const t = String(trat || '').toLowerCase();
     return !!t.match(/endo|nervio|fractura|frontal|oscuro|anterior/);
   }
 
@@ -169,19 +174,13 @@
   }
 
   function getPrecio(trat, estado, extr, horario, aparato, edad) {
-    const t = (trat || '').toLowerCase();
-    const h = (horario || '').toLowerCase();
+    const t = String(trat || '').toLowerCase();
+    const h = String(horario || '').toLowerCase();
 
-    // 1. GARANTÍAS - $0 Costo
     if (estado === 'Garantia') return { monto: 'GARANTÍA ($0)', clase: 'gratis' };
-
-    // 2. VIP / PREMIUM Automático
     if (esCasoPremium(trat, estado)) return { monto: '$' + PRECIOS.vip.toLocaleString(), clase: 'premium' };
-
-    // 3. SABADO GRATIS
     if (estado === 'Sabado') return { monto: 'GRATIS', clase: 'gratis' };
 
-    // 4. LÓGICA INFANTIL 8 a 12 AÑOS
     let esInfantil = t.includes('infantil') || t.includes('niño') || t.includes('pedi') || t.includes('menor');
     let edadNum = parseInt(edad) || 0;
     let es8a12 = edadNum >= 8 && edadNum <= 12;
@@ -189,34 +188,29 @@
     if (esInfantil && es8a12) {
       let reqAparato = tieneAparato(aparato);
       let puedeManana = /mañana|mañanas|\bam\b/i.test(h);
-
       if (reqAparato && puedeManana) return { monto: '$500', clase: 'normal' };
       if (reqAparato || puedeManana) return { monto: '$300', clase: 'normal' };
       return { monto: '$' + PRECIOS.infantil_tarde.toLocaleString(), clase: 'normal' };
     }
 
-    // 5. DEMÁS INFANTILES
     if (esInfantil) {
       if (/\bam\b|mañana|mañanas/i.test(h)) return { monto: '$' + PRECIOS.infantil_manana.toLocaleString(), clase: 'normal' };
       return { monto: '$' + PRECIOS.infantil_tarde.toLocaleString(), clase: 'normal' };
     }
 
-    // 6. APARATOS NO INFANTILES
     if (tieneAparato(aparato)) return { monto: '$' + PRECIOS.aparato.toLocaleString(), clase: 'normal' };
 
-    // 7. EXTRACCIONES
     const n = contarExtracciones(extr);
     if (t.includes('extrac') || t.includes('sacar') || t.includes('muela') || t.includes('juicio')) {
       if (n >= 3) return { monto: '$' + PRECIOS.extraccion_3.toLocaleString(), clase: 'normal' };
       if (n >= 2) return { monto: '$' + PRECIOS.extraccion_2.toLocaleString(), clase: 'normal' };
     }
 
-    // 8. GENERAL
     return { monto: '$' + PRECIOS.general.toLocaleString(), clase: 'normal' };
   }
 
   function getIcono(tratamiento) {
-    const t = (tratamiento || '').toLowerCase();
+    const t = String(tratamiento || '').toLowerCase();
     if (t.includes('endodoncia') || t.includes('nervio') || t.includes('fractura')) return '🔴';
     if (t.includes('extracción') || t.includes('extracci') || t.includes('sacar')) return '🦷';
     if (t.includes('resina') || t.includes('caries') || t.includes('empa')) return '🔵';
@@ -242,6 +236,7 @@
       prospectosCache = json.data.reverse();
       if (json.precios) PRECIOS = json.precios;
       renderTodos();
+      renderPrecios(); // Dibuja la pestaña de precios
       mostrarToast('Base de datos actualizada');
     } catch(e) {
       alert('Error de conexión. Reintenta.');
@@ -253,7 +248,6 @@
 
   // ── RENDER TABS ──
   function renderTodos() {
-    // 1. PENDIENTES DE PAGO
     const pPagos = prospectosCache.filter(p => p.estado === 'Pago enviado');
     document.getElementById('badge-pagos').textContent = pPagos.length;
     document.getElementById('badge-pagos').style.display = pPagos.length > 0 ? 'inline-block' : 'none';
@@ -261,28 +255,25 @@
     if (pPagos.length === 0) {
       divPagos.innerHTML = `<div class="empty"><div class="ei">✅</div><p>No hay pagos pendientes de validar.</p></div>`;
     } else {
-      divPagos.innerHTML = `<h2>⚠️ Pagos por Validar</h2><p style="color:#94A3B8; font-size:14px; margin-bottom:16px;">Revisa el comprobante y aprueba para liberar los datos al alumno.</p>` + pPagos.map(buildCard).join('');
+      divPagos.innerHTML = `<h2>⚠️ Pagos por Validar</h2><p style="color:#94A3B8; font-size:14px; margin-bottom:16px;">Revisa el comprobante y aprueba para liberar los datos.</p>` + pPagos.map(buildCard).join('');
     }
 
-    // 2. ACTIVOS (En el portal)
     const pActivos = prospectosCache.filter(p => ['Disponible', 'VIP', 'Sabado'].includes(p.estado));
     const divActivos = document.getElementById('tab-activos');
     if (pActivos.length === 0) {
-      divActivos.innerHTML = `<div class="empty"><div class="ei">👻</div><p>No hay pacientes activos en el portal. Están todos vendidos.</p></div>`;
+      divActivos.innerHTML = `<div class="empty"><div class="ei">👻</div><p>No hay pacientes activos en el portal.</p></div>`;
     } else {
-      divActivos.innerHTML = `<h2>🟢 En Portal de Alumnos</h2><p style="color:#94A3B8; font-size:14px; margin-bottom:16px;">Estos son los pacientes que los alumnos están viendo actualmente.</p>` + pActivos.map(buildCard).join('');
+      divActivos.innerHTML = `<h2>🟢 En Portal de Alumnos</h2><p style="color:#94A3B8; font-size:14px; margin-bottom:16px;">Pacientes que los alumnos están viendo actualmente.</p>` + pActivos.map(buildCard).join('');
     }
 
-    // 3. GARANTÍAS (Reposiciones a Costo 0)
     const pGar = prospectosCache.filter(p => p.estado === 'Garantia');
     const divGar = document.getElementById('tab-garantias');
     if (pGar.length === 0) {
       divGar.innerHTML = `<div class="empty"><div class="ei">🙌</div><p>No has asignado pacientes como reposición recientemente.</p></div>`;
     } else {
-      divGar.innerHTML = `<h2>🟠 Reposiciones (Garantía)</h2><p style="color:#94A3B8; font-size:14px; margin-bottom:16px;">Prospectos entregados a alumnos sin costo como reposición de una garantía previa.</p>` + pGar.map(buildCard).join('');
+      divGar.innerHTML = `<h2>🟠 Reposiciones (Garantía)</h2><p style="color:#94A3B8; font-size:14px; margin-bottom:16px;">Prospectos entregados sin costo como reposición.</p>` + pGar.map(buildCard).join('');
     }
 
-    // 4. HISTORIAL
     const pHist = prospectosCache.filter(p => ['Asignado', 'Contactado', 'No respondio', 'Regalado'].includes(p.estado));
     const divHist = document.getElementById('tab-historial');
     if (pHist.length === 0) {
@@ -300,12 +291,10 @@
     else if (p.estado === 'Garantia') stHtml = `<span class="st-garantia">🟠 GARANTÍA ASIGNADA</span>`;
     else if (isPrem) stHtml = `<span class="st-vip">🔴 PREMIUM</span>`;
     else if (p.estado === 'Disponible') stHtml = `<span class="st-disponible">🟢 DISPONIBLE</span>`;
-    else stHtml = `<span style="color:#94A3B8;font-weight:600;font-size:13px">${p.estado.toUpperCase()}</span>`;
+    else stHtml = `<span style="color:#94A3B8;font-weight:600;font-size:13px">${String(p.estado).toUpperCase()}</span>`;
 
     let numFotos = 0;
-    if (p.foto) {
-      numFotos = p.foto.split('|').filter(u => u.trim() !== '').length;
-    }
+    if (p.foto) numFotos = String(p.foto).split('|').filter(u => u.trim() !== '').length;
     const badgeFoto = numFotos > 0 ? `<span class="meta-tag" style="color:#60A5FA;">📷 ${numFotos} Foto${numFotos>1?'s':''}</span>` : '';
 
     return `
@@ -314,9 +303,9 @@
           <div class="card-id">${p.id}</div>
           ${stHtml}
         </div>
-        <div class="card-title">${getIcono(p.tratamiento)} ${(p.tratamiento||'').replace(/\.$/,'')}</div>
+        <div class="card-title">${getIcono(p.tratamiento)} ${String(p.tratamiento||'').replace(/\.$/,'')}</div>
         <div class="card-meta">
-          ${p.alumnoAsignado ? `<span class="meta-tag" style="color:#FCD34D;">👤 Alumno: ${p.alumnoAsignado}</span>` : ''}
+          ${p.alumnoAsignado ? `<span class="meta-tag" style="color:#FCD34D;">👤 ${p.alumnoAsignado}</span>` : ''}
           ${badgeFoto}
           <span class="meta-tag">🕐 ${p.horario || 'N/A'}</span>
         </div>
@@ -331,7 +320,60 @@
     btn.classList.add('active');
   }
 
-  // ── MODAL DETALLE ADMIN ──
+  // ── PRECIOS Y CONFIGURACIÓN ──
+  function renderPrecios() {
+    const html = `
+      <div class="config-row"><div><div class="config-lbl">Tarifa General</div><span class="config-sub">Resinas, limpiezas, extracciones (1)</span></div>
+        <input type="number" id="precio_general" class="config-input" value="${PRECIOS.general}"></div>
+      <div class="config-row"><div><div class="config-lbl">Casos Premium (VIP)</div><span class="config-sub">Endodoncias y fracturas frontales</span></div>
+        <input type="number" id="precio_vip" class="config-input" value="${PRECIOS.vip}"></div>
+      <div class="config-row"><div><div class="config-lbl">Infantil (Tarde)</div><span class="config-sub">Pacientes niños turno tarde</span></div>
+        <input type="number" id="precio_infantil_tarde" class="config-input" value="${PRECIOS.infantil_tarde}"></div>
+      <div class="config-row"><div><div class="config-lbl">Infantil (Mañana)</div><span class="config-sub">Pacientes niños turno mañana</span></div>
+        <input type="number" id="precio_infantil_manana" class="config-input" value="${PRECIOS.infantil_manana}"></div>
+      <div class="config-row"><div><div class="config-lbl">Extracciones (2)</div><span class="config-sub">Pacientes que requieren 2 extracciones</span></div>
+        <input type="number" id="precio_extraccion_2" class="config-input" value="${PRECIOS.extraccion_2}"></div>
+      <div class="config-row"><div><div class="config-lbl">Extracciones (3 o más)</div><span class="config-sub">Múltiples extracciones complejas</span></div>
+        <input type="number" id="precio_extraccion_3" class="config-input" value="${PRECIOS.extraccion_3}"></div>
+      <div class="config-row" style="border:none"><div><div class="config-lbl">Ortodoncia / Aparatos</div><span class="config-sub">Arco lingual, mantenedores, etc.</span></div>
+        <input type="number" id="precio_aparato" class="config-input" value="${PRECIOS.aparato}"></div>
+    `;
+    document.getElementById('form-precios').innerHTML = html;
+  }
+
+  async function guardarPrecios() {
+    const btn = document.getElementById('btn-save-prices');
+    btn.style.opacity = '0.6';
+    btn.textContent = 'Guardando...';
+
+    const payload = [
+      'accion=setPrecios',
+      'precio_general=' + document.getElementById('precio_general').value,
+      'precio_vip=' + document.getElementById('precio_vip').value,
+      'precio_infantil_tarde=' + document.getElementById('precio_infantil_tarde').value,
+      'precio_infantil_manana=' + document.getElementById('precio_infantil_manana').value,
+      'precio_extraccion_2=' + document.getElementById('precio_extraccion_2').value,
+      'precio_extraccion_3=' + document.getElementById('precio_extraccion_3').value,
+      'precio_aparato=' + document.getElementById('precio_aparato').value
+    ].join('&');
+
+    try {
+      const res = await fetch(API_URL + '?' + payload);
+      const json = await res.json();
+      if(json.ok) {
+        PRECIOS = json.precios;
+        renderTodos();
+        mostrarToast('Precios actualizados');
+      }
+    } catch(e) {
+      alert('Error al guardar precios');
+    } finally {
+      btn.style.opacity = '1';
+      btn.textContent = '💾 Guardar Precios';
+    }
+  }
+
+  // ── MODAL DETALLE ADMIN (CORREGIDO PARA NÚMEROS) ──
   function abrirDetalle(id) {
     const p = prospectosCache.find(x => String(x.id).trim() === String(id).trim());
     if (!p) return;
@@ -343,27 +385,24 @@
     // Render de múltiples fotos
     let fotosHtml = '';
     if (p.foto) {
-      const fotosArr = p.foto.split('|').map(u => u.trim()).filter(u => u.length > 0);
+      const fotosArr = String(p.foto).split('|').map(u => u.trim()).filter(u => u.length > 0);
       fotosArr.forEach((urlRaw, index) => {
         let safeUrl = urlRaw.replace('http:', 'https:');
         const matchId = safeUrl.match(/[?&]id=([a-zA-Z0-9_-]{25,})/);
-        if (matchId) {
-          safeUrl = 'https://drive.google.com/uc?export=view&id=' + matchId[1];
-        }
+        if (matchId) safeUrl = 'https://drive.google.com/uc?export=view&id=' + matchId[1];
         
         fotosHtml += `
         <div style="margin-top:12px;border-radius:12px;overflow:hidden;cursor:pointer;position:relative;border:1px solid var(--border);" onclick="abrirLightbox('${safeUrl}')">
-          <img src="${safeUrl}" alt="Foto ${index + 1}" style="width:100%;max-height:220px;object-fit:cover;display:block;"
-               onerror="this.parentElement.style.display='none'">
+          <img src="${safeUrl}" alt="Foto ${index + 1}" style="width:100%;max-height:220px;object-fit:cover;display:block;" onerror="this.parentElement.style.display='none'">
           <div style="position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,0.6);color:white;font-size:11px;padding:4px 8px;border-radius:6px;">🔍 Ampliar</div>
-          <div style="position:absolute;top:8px;left:8px;background:rgba(14,165,233,0.8);color:white;font-size:11px;font-weight:700;padding:4px 8px;border-radius:6px;">📷 Foto del Paciente ${index + 1} de ${fotosArr.length}</div>
+          <div style="position:absolute;top:8px;left:8px;background:rgba(14,165,233,0.8);color:white;font-size:11px;font-weight:700;padding:4px 8px;border-radius:6px;">📷 Foto Paciente ${index + 1} de ${fotosArr.length}</div>
         </div>`;
       });
     }
 
     let compHtml = '';
     if (p.comprobante) {
-      let compUrl = p.comprobante.replace('http:', 'https:');
+      let compUrl = String(p.comprobante).replace('http:', 'https:');
       const mC = compUrl.match(/[?&]id=([a-zA-Z0-9_-]{25,})/);
       if (mC) compUrl = 'https://drive.google.com/uc?export=view&id=' + mC[1];
 
@@ -376,6 +415,9 @@
       `;
     }
 
+    // EL BLINDAJE: Convertir teléfono a string antes de hacer replace
+    const telLimpio = String(p.telefono || '').replace(/\D/g, '');
+
     document.getElementById('detalle-content').innerHTML = `
       <h2 style="font-family:'Syne', sans-serif; margin-bottom: 2px;">${p.id}</h2>
       <p style="color:var(--muted); font-size:14px; margin-bottom:16px;">${p.tratamiento}</p>
@@ -385,7 +427,7 @@
       
       <h3 style="font-size:12px; color:var(--blue); text-transform:uppercase; margin-top:20px; margin-bottom:8px; letter-spacing:1px;">Datos Ocultos (Privados)</h3>
       <div class="detail-row"><span class="lbl">Nombre:</span><span class="val">${p.nombre || 'N/A'}</span></div>
-      <div class="detail-row"><span class="lbl">Teléfono:</span><span class="val"><a href="https://wa.me/52${(p.telefono||'').replace(/\D/g,'')}" target="_blank" style="color:var(--blue);text-decoration:none;font-weight:700;">📞 ${p.telefono || 'N/A'}</a></span></div>
+      <div class="detail-row"><span class="lbl">Teléfono:</span><span class="val"><a href="https://wa.me/52${telLimpio}" target="_blank" style="color:var(--blue);text-decoration:none;font-weight:700;">📞 ${p.telefono || 'N/A'}</a></span></div>
       
       <h3 style="font-size:12px; color:var(--blue); text-transform:uppercase; margin-top:20px; margin-bottom:8px; letter-spacing:1px;">Datos Médicos</h3>
       <div class="detail-row"><span class="lbl">Horario:</span><span class="val">${p.horario || 'N/A'}</span></div>
@@ -396,7 +438,6 @@
       ${tieneAparato(p.aparato) ? `<div class="detail-row"><span class="lbl">Aparato Ortopédico:</span><span class="val" style="color:#FCD34D">Sí requiere</span></div>` : ''}
       
       ${fotosHtml}
-      
       ${compHtml}
       
       <div style="margin-top:24px; padding-top:16px; border-top:1px solid var(--border);">
@@ -432,9 +473,7 @@
   }
 
   // ── ACCIONES ──
-  function cerrarModal() {
-    document.getElementById('modal-detalle').classList.remove('active');
-  }
+  function cerrarModal() { document.getElementById('modal-detalle').classList.remove('active'); }
 
   async function cambiarEstadoAdmin(id, nuevoEstado) {
     cerrarModal();
@@ -442,9 +481,7 @@
     try {
       await fetch(API_URL + '?accion=cambiarEstado&id=' + encodeURIComponent(id) + '&estado=' + encodeURIComponent(nuevoEstado));
       await cargarDatos();
-    } catch(e) {
-      alert('Error al actualizar');
-    }
+    } catch(e) { alert('Error al actualizar'); }
   }
 
   function aprobarPago(id) {
@@ -457,9 +494,7 @@
     const selector = document.getElementById('select-estado-' + id);
     if (!selector) return;
     const nuevo = selector.value;
-    if (confirm(`¿Cambiar estado a "${nuevo}"?`)) {
-      cambiarEstadoAdmin(id, nuevo);
-    }
+    if (confirm(`¿Cambiar estado a "${nuevo}"?`)) cambiarEstadoAdmin(id, nuevo);
   }
 
   function mostrarToast(msg) {
