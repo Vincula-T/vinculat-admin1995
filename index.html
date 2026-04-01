@@ -1283,13 +1283,19 @@
     let infoAlumnoHtml = '';
     if (p.alumnoAsignado) {
       const telAlumnoLimpio = String(p.telAlumno || '').replace(/\D/g, '');
+      const alumnoRawSheet  = p.alumnoAsignado;
+      const esGarantiaSheet = alumnoRawSheet.includes('[GARANTÍA:tel:');
+      const alumnoNombreSheet = esGarantiaSheet ? alumnoRawSheet.split('[GARANTÍA:')[0].trim() : alumnoRawSheet;
+      const telMaloSheet    = esGarantiaSheet ? (alumnoRawSheet.match(/\[GARANTÍA:tel:([^\]]+)\]/) || [])[1] || null : null;
+      const alumnoEscSheet  = alumnoNombreSheet.replace(/'/g,"\\'");
+      const telMaloArg      = telMaloSheet ? `,'${telMaloSheet}'` : '';
       infoAlumnoHtml = `
         <h3 style="font-size:12px; color:var(--blue); text-transform:uppercase; margin-top:20px; margin-bottom:8px; letter-spacing:1px;">Datos de Asignación</h3>
-        <div class="sh-row"><span class="sh-key">Alumno:</span><span class="sh-val" style="color:#FCD34D;">${p.alumnoAsignado}</span></div>
+        <div class="sh-row"><span class="sh-key">Alumno:</span><span class="sh-val" style="color:#FCD34D;">${alumnoNombreSheet}</span></div>
         ${p.telAlumno ? `
           <div class="sh-row"><span class="sh-key">Tel. Alumno:</span><span class="sh-val"><a href="https://wa.me/52${telAlumnoLimpio}" target="_blank" style="color:#10B981;font-weight:700;text-decoration:none;">📞 ${p.telAlumno}</a></span></div>
         ` : `<div class="sh-row"><span class="sh-key">Tel. Alumno:</span><span class="sh-val">No registrado</span></div>`}
-        <button class="btn" style="background:#25D366; color:white; margin-top:12px; box-shadow: 0 4px 16px rgba(37,211,102,0.3);" onclick="mostrarEnvioWhatsApp(prospectoActivo, '${p.alumnoAsignado.replace(/'/g,"\\'")}')">
+        <button class="btn" style="background:#25D366; color:white; margin-top:12px; box-shadow: 0 4px 16px rgba(37,211,102,0.3);" onclick="mostrarEnvioWhatsApp(prospectoActivo, '${alumnoEscSheet}'${telMaloArg})">
           📲 Enviar Notificaciones WhatsApp
         </button>
       `;
