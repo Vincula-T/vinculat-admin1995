@@ -1521,7 +1521,8 @@
     const primerNombre = p.nombre ? p.nombre.split(' ')[0] : 'Paciente';
     const folio = p.expediente ? `📁 *Expediente:* ${p.expediente}\n` : '';
 
-    const msgAlumno = `🦷 *¡Hola ${alumno}!* Tu pago ha sido validado.\n\nAquí tienes los datos de tu paciente:\n\n👤 *Paciente:* ${nomPaciente}\n📞 *Teléfono:* ${p.telefono || 'Ver en Sheets'}\n👉 *Link WA:* https://wa.me/52${telLimpio}\n\n🔧 *Tratamiento:* ${p.tratamiento}\n🕐 *Horario preferido:* ${p.horario || 'A definir'}\n${folio}\n¡Mucho éxito en clínica!`;
+    const esGarantiaMsg = telMalo !== null;
+    const msgAlumno = `🦷 *¡Hola ${alumno}!* ${esGarantiaMsg ? 'Tu garantía ha sido validada.' : 'Tu pago ha sido validado.'}\n\nAquí tienes los datos de tu paciente:\n\n👤 *Paciente:* ${nomPaciente}\n📞 *Teléfono:* ${p.telefono || 'Ver en Sheets'}\n👉 *Link WA:* https://wa.me/52${telLimpio}\n\n🔧 *Tratamiento:* ${p.tratamiento}\n🕐 *Horario preferido:* ${p.horario || 'A definir'}\n${folio}\n¡Mucho éxito en clínica!`;
     const msgAlumnoEncoded = encodeURIComponent(msgAlumno);
 
     const msgPaciente = `Hola ${primerNombre}, te contactamos de Enlace Odontológico Universitario 🦷\n\nTu caso ha sido asignado al doctor(a) *${alumno}*, quien se pondrá en contacto contigo muy pronto para coordinar tu cita.\n\nPor favor, guarda su número para cuando te escriba: ${p.telAlumno || 'No registrado'}\n\n¡Gracias por tu confianza! ✅`;
