@@ -1076,15 +1076,35 @@
     pagoEnviado.forEach(p => {
       const alumnoRaw    = p.alumnoAsignado || 'Sin nombre';
       const esGarantia   = alumnoRaw.includes('[GARANTÍA:tel:');
-      const alumnoNombre = esGarantia ? alumnoRaw.split('[GARANTÍA:')[0].trim() : alumnoRaw;
+      const esSabado     = alumnoRaw.includes('[SÁBADO]');
+      const alumnoNombre = esGarantia ? alumnoRaw.split('[GARANTÍA:')[0].trim()
+                         : esSabado   ? alumnoRaw.replace('[SÁBADO]','').trim()
+                         : alumnoRaw;
       const telMalo      = esGarantia ? (alumnoRaw.match(/\[GARANTÍA:tel:([^\]]+)\]/) || [])[1] || '' : '';
-      const pc = esGarantia ? '🔄 GARANTÍA' : getPrecioStr(p.tratamiento, 'Asignado', p.extracciones, p.horario, p.aparato, p.edad);
+      const pc = esGarantia ? '🔄 GARANTÍA' : esSabado ? '🎁 GRATIS' : getPrecioStr(p.tratamiento, 'Asignado', p.extracciones, p.horario, p.aparato, p.edad);
       const ref = esGarantia ? ('GAR-' + String(p.id).padStart(3,'0')) : ('VIN-' + String(p.id).padStart(3,'0'));
       const tieneComp = p.comprobante && (p.comprobante.startsWith('data:') || p.comprobante.startsWith('https://'));
       const alumnoEscapado = alumnoNombre.replace(/'/g,'');
       const tratEscapado   = (p.tratamiento||'').replace(/'/g,'');
 
-      if (esGarantia) {
+      if (esSabado) {
+        html += `
+        <div class="pago-enviado-card" style="border-color:rgba(253,211,77,0.5);background:rgba(253,211,77,0.05);">
+          <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(253,211,77,0.15);color:#FCD34D;font-size:11px;font-weight:800;padding:3px 10px;border-radius:100px;margin-bottom:10px;">🎁 SÁBADO GRATUITO</div>
+          <div class="pe-header">
+            <div>
+              <div class="pe-ref">${ref}</div>
+              <div class="pe-alumno">👤 ${alumnoNombre}</div>
+            </div>
+            <div style="font-size:12px;color:#94A3B8;text-align:right;">WhatsApp:<br><strong style="color:#10B981;">${p.telAlumno || 'N/A'}</strong></div>
+          </div>
+          <div class="pe-trat">${p.tratamiento}</div>
+          <div class="pe-actions">
+            <button class="btn-validar" style="background:#FCD34D;color:#1A0A00;" onclick="validarPagoNuevo('${p.id}', '${alumnoEscapado}', '${tratEscapado}', 'GRATIS')">✅ Asignar</button>
+            <button class="btn-rechazar-pago" onclick="rechazarPagoNuevo('${p.id}')">↩️ Rechazar</button>
+          </div>
+        </div>`;
+      } else if (esGarantia) {
         html += `
         <div class="pago-enviado-card" style="border-color:rgba(245,158,11,0.5);background:rgba(245,158,11,0.05);">
           <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(245,158,11,0.15);color:#FCD34D;font-size:11px;font-weight:800;padding:3px 10px;border-radius:100px;margin-bottom:10px;">🔄 SOLICITUD DE GARANTÍA</div>
