@@ -1544,19 +1544,24 @@
     const esGarantiaMsg = telMalo !== null;
     const ref = esGarantiaMsg ? ('GAR-' + String(p.id).padStart(3, '0')) : ('VIN-' + String(p.id).padStart(3, '0'));
 function enviarDatosPaciente(id) {
-  const p = prospectos.find(x => String(x.id) === String(id));
-  if(!p) return;
+  // 1. Buscamos el prospecto en la lista (ajusta 'prospectos' si tu variable global tiene otro nombre)
+  const p = prospectos.find(x => String(x.id).trim() === String(id).trim());
+  
+  if (!p) {
+    console.error("No se encontró el prospecto con ID:", id);
+    return;
+  }
 
-  // Detectamos si el estatus del pago contiene la palabra "Apoyo"
+  // 2. Definimos el saludo dependiendo de si es un Apoyo o un Pago
   let saludo = "";
-  if (p.pago && p.pago.includes("Apoyo")) {
+  if (p.pago && String(p.pago).includes("Apoyo")) {
     saludo = "🎉 *¡Tu apoyo ha sido aprobado!*";
   } else {
     saludo = "✅ *¡Tu pago ha sido validado!*";
   }
 
-  // Construimos el mensaje con el saludo dinámico
-  const msg = `${saludo}
+  // 3. Construimos el mensaje (usamos variables que existen en tu leerTodosLosProspectos)
+  const mensaje = `${saludo}
 Aquí tienes los datos de tu paciente asignado:
 
 📋 *Folio:* ${p.id}
@@ -1566,7 +1571,9 @@ Aquí tienes los datos de tu paciente asignado:
 
 ¡Mucho éxito en tu clínica! 🦷`;
 
-  window.open(`https://wa.me/${p.telAlumno}?text=${encodeURIComponent(msg)}`, '_blank');
+  // 4. Abrimos WhatsApp (usamos p.telAlumno que es el campo del estudiante)
+  const url = "https://wa.me/" + String(p.telAlumno).replace(/\D/g, '') + "?text=" + encodeURIComponent(mensaje);
+  window.open(url, '_blank');
 }
     const msgAlumnoEncoded = encodeURIComponent(msgAlumno);
 
