@@ -924,6 +924,10 @@
     return getPrecioObj(trat, estado, extr, horario, aparato, edad).monto;
   }
 
+  function esc(s) {
+    return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
   // ── CARGAR DATOS ──
   async function cargarTodo() {
     try {
@@ -1084,8 +1088,8 @@
       const pc = esGarantia ? '🔄 GARANTÍA' : esSabado ? '🎁 GRATIS' : getPrecioStr(p.tratamiento, 'Asignado', p.extracciones, p.horario, p.aparato, p.edad);
       const ref = esGarantia ? ('GAR-' + String(p.id).padStart(3,'0')) : ('VIN-' + String(p.id).padStart(3,'0'));
       const tieneComp = p.comprobante && (p.comprobante.startsWith('data:') || p.comprobante.startsWith('https://'));
-      const alumnoEscapado = alumnoNombre.replace(/'/g,'');
-      const tratEscapado   = (p.tratamiento||'').replace(/'/g,'');
+      const alumnoEscapado = esc(alumnoNombre).replace(/'/g,'');
+      const tratEscapado   = esc(p.tratamiento||'').replace(/'/g,'');
 
       if (esSabado) {
         html += `
@@ -1094,11 +1098,11 @@
           <div class="pe-header">
             <div>
               <div class="pe-ref">${ref}</div>
-              <div class="pe-alumno">👤 ${alumnoNombre}</div>
+              <div class="pe-alumno">👤 ${esc(alumnoNombre)}</div>
             </div>
-            <div style="font-size:12px;color:#94A3B8;text-align:right;">WhatsApp:<br><strong style="color:#10B981;">${p.telAlumno || 'N/A'}</strong></div>
+            <div style="font-size:12px;color:#94A3B8;text-align:right;">WhatsApp:<br><strong style="color:#10B981;">${esc(p.telAlumno || 'N/A')}</strong></div>
           </div>
-          <div class="pe-trat">${p.tratamiento}</div>
+          <div class="pe-trat">${esc(p.tratamiento)}</div>
           <div class="pe-actions">
             <button class="btn-validar" style="background:#FCD34D;color:#1A0A00;" onclick="validarPagoNuevo('${p.id}', '${alumnoEscapado}', '${tratEscapado}', 'GRATIS')">✅ Asignar</button>
             <button class="btn-rechazar-pago" onclick="rechazarPagoNuevo('${p.id}')">↩️ Rechazar</button>
@@ -1111,11 +1115,11 @@
           <div class="pe-header">
             <div>
               <div class="pe-ref" style="color:#FCD34D;">${ref}</div>
-              <div class="pe-alumno">👤 ${alumnoNombre}</div>
+              <div class="pe-alumno">👤 ${esc(alumnoNombre)}</div>
             </div>
-            <div style="font-size:12px;color:#94A3B8;text-align:right;">Prospecto malo:<br><strong style="color:#F87171;">${telMalo}</strong></div>
+            <div style="font-size:12px;color:#94A3B8;text-align:right;">Prospecto malo:<br><strong style="color:#F87171;">${esc(telMalo)}</strong></div>
           </div>
-          <div class="pe-trat">Nuevo prospecto solicitado: ${p.tratamiento}</div>
+          <div class="pe-trat">Nuevo prospecto solicitado: ${esc(p.tratamiento)}</div>
           <div style="font-size:12px;color:#94A3B8;margin-bottom:10px;">📸 Evidencia adjunta — debe mostrar número sin guardar y mensaje de cierre</div>
           ${tieneComp ? `<img class="pe-comp-thumb" src="${p.comprobante}" alt="Evidencia" onclick="abrirLightboxComp('${p.comprobante}')">` : '<div style="background:#0A1628;border-radius:10px;height:80px;display:flex;align-items:center;justify-content:center;color:#64748B;font-size:13px;margin-bottom:12px">Sin evidencia adjunta</div>'}
           <div class="pe-actions">
@@ -1129,11 +1133,11 @@
           <div class="pe-header">
             <div>
               <div class="pe-ref">${ref}</div>
-              <div class="pe-alumno">👤 ${alumnoNombre}</div>
+              <div class="pe-alumno">👤 ${esc(alumnoNombre)}</div>
             </div>
-            <div class="pe-monto">${pc}</div>
+            <div class="pe-monto">${esc(pc)}</div>
           </div>
-          <div class="pe-trat">${p.tratamiento}</div>
+          <div class="pe-trat">${esc(p.tratamiento)}</div>
           ${tieneComp ? `<img class="pe-comp-thumb" src="${p.comprobante}" alt="Comprobante" onclick="abrirLightboxComp('${p.comprobante}')">` : '<div style="background:#0A1628;border-radius:10px;height:80px;display:flex;align-items:center;justify-content:center;color:#64748B;font-size:13px;margin-bottom:12px">Sin comprobante adjunto</div>'}
           <div class="pe-actions">
             <button class="btn-validar" onclick="validarPagoNuevo('${p.id}', '${alumnoEscapado}', '${tratEscapado}', '${pc}')">✅ Validar pago</button>
@@ -1368,6 +1372,17 @@
   async function guardarEstado() {
     if (!estadoSeleccionado || !prospectoActivo) return;
     if (estadoSeleccionado === prospectoActivo.estado) { cerrarSheet(); return; }
+    const estadoActual = prospectoActivo.estado;
+    const estadosPeligrosos = ['Disponible', 'Sabado', 'Regalado'];
+    if (estadoActual === 'Asignado' && estadosPeligrosos.includes(estadoSeleccionado)) {
+      const ok = confirm(
+        '⚠️ ATENCIÓN: Este prospecto ya tiene un PAGO VALIDADO.\n\n' +
+        'Cambiar a "' + estadoSeleccionado + '" lo liberaría de vuelta a los alumnos ' +
+        'y puede causar conflictos con el alumno que ya pagó.\n\n' +
+        '¿Deseas continuar de todas formas?'
+      );
+      if (!ok) return;
+    }
     await cambiarEstado(prospectoActivo.id, estadoSeleccionado, '✅ Estado actualizado a: ' + estadoSeleccionado);
     cerrarSheet();
   }
@@ -1514,8 +1529,13 @@
     await cambiarEstado(id, 'Garantia', '✅ Garantía aprobada — prospecto asignado');
 
     // 2. Prospecto malo (por teléfono) → estado "No respondio"
+    // Se excluye el prospecto nuevo (id) y se prefiere el que ya está Asignado
     const telLimpio = String(telMalo).replace(/\D/g, '');
-    const prospectoMalo = todos.find(p => String(p.telefono || '').replace(/\D/g, '') === telLimpio);
+    const candidatos = todos.filter(p =>
+      String(p.id) !== String(id) &&
+      String(p.telefono || '').replace(/\D/g, '') === telLimpio
+    );
+    const prospectoMalo = candidatos.find(p => p.estado === 'Asignado') || candidatos[0];
     if (prospectoMalo) {
       await cambiarEstado(prospectoMalo.id, 'No respondio', '↩️ Marcado como No respondió');
     }
