@@ -727,16 +727,6 @@
   </div>
 </div>
 
-<div class="panel" id="panel-alertas">
-  <div class="sec">
-    Alertas activas
-    <span class="sec-badge" id="count-alertas">—</span>
-  </div>
-  <div id="list-alertas">
-    <div class="loading-state"><div class="spinner"></div><div class="loading-text">Cargando...</div></div>
-  </div>
-</div>
-
 <div class="panel" id="panel-resumen">
   <div class="sec">Resumen del mes</div>
   <div class="resumen-grid" id="resumen-grid">
@@ -744,34 +734,6 @@
   </div>
   <div class="sec">Desglose por tratamiento</div>
   <div class="prospect-list" id="resumen-detalle"></div>
-</div>
-
-<div class="panel" id="panel-vip">
-  <div class="sec">Crear caso VIP manualmente</div>
-  <div style="padding: 0 12px;">
-    <div class="vip-form">
-      <div class="form-group">
-        <label class="form-label">Nombre del paciente</label>
-        <input class="form-input" id="vip-nombre" placeholder="Nombre completo" type="text">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Teléfono / WhatsApp</label>
-        <input class="form-input" id="vip-tel" placeholder="81XXXXXXXX" type="tel">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Tipo de endodoncia</label>
-        <input class="form-input" id="vip-motivo" placeholder="Ej: Fractura diente frontal, diente oscuro..." type="text">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Horario preferido</label>
-        <input class="form-input" id="vip-horario" placeholder="Ej: Mañanas, Martes y Jueves" type="text">
-      </div>
-      <div style="background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.2); border-radius:10px; padding:12px; font-size:12px; color:#F87171; line-height:1.6;">
-        ⚠️ Solo crea casos VIP después de verificar foto e INE del paciente directamente por WhatsApp.
-      </div>
-      <button class="btn btn-red" onclick="crearVIP()">🔴 Publicar caso VIP · $1,500</button>
-    </div>
-  </div>
 </div>
 
 <div class="panel" id="panel-precios">
@@ -793,12 +755,7 @@
     <span class="nav-label">Pagos</span>
     <span class="nav-badge" id="badge-pagos" style="display:none">0</span>
   </button>
-  <button class="nav-item" onclick="showPanel('alertas'); showNav(2)">
-    <span class="nav-icon">⚠️</span>
-    <span class="nav-label">Alertas</span>
-    <span class="nav-badge" id="badge-alertas" style="display:none">0</span>
-  </button>
-  <button class="nav-item" onclick="showPanel('resumen'); showNav(3)">
+  <button class="nav-item" onclick="showPanel('resumen'); showNav(2)">
     <span class="nav-icon">📊</span>
     <span class="nav-label">Resumen</span>
   </button>
@@ -939,7 +896,7 @@
       
       renderProspectos();
       renderPagos();
-      renderAlertas();
+      // renderAlertas();  // Sección deshabilitada
       renderResumen();
       actualizarKPIs();
       renderPrecios();
@@ -1092,9 +1049,13 @@
       const tratEscapado   = esc(p.tratamiento||'').replace(/'/g,'');
 
       if (esSabado) {
+        const fechaHora = p.fecha ? new Date(p.fecha).toLocaleString('es-MX', {year:'2-digit', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit'}) : 'N/A';
         html += `
         <div class="pago-enviado-card" style="border-color:rgba(253,211,77,0.5);background:rgba(253,211,77,0.05);">
-          <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(253,211,77,0.15);color:#FCD34D;font-size:11px;font-weight:800;padding:3px 10px;border-radius:100px;margin-bottom:10px;">🎁 SÁBADO GRATUITO</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(253,211,77,0.15);color:#FCD34D;font-size:11px;font-weight:800;padding:3px 10px;border-radius:100px;">🎁 APOYO GRATUITO</div>
+            <div style="font-size:11px;color:#94A3B8;">📅 ${fechaHora}</div>
+          </div>
           <div class="pe-header">
             <div>
               <div class="pe-ref">${ref}</div>
@@ -1103,33 +1064,43 @@
             <div style="font-size:12px;color:#94A3B8;text-align:right;">WhatsApp:<br><strong style="color:#10B981;">${esc(p.telAlumno || 'N/A')}</strong></div>
           </div>
           <div class="pe-trat">${esc(p.tratamiento)}</div>
+          <div style="font-size:12px;color:#10B981;margin:8px 0;padding:8px;background:rgba(16,185,129,0.1);border-radius:6px;">✅ Sin comprobante requerido — prospecto asignado como apoyo sin garantía</div>
           <div class="pe-actions">
-            <button class="btn-validar" style="background:#FCD34D;color:#1A0A00;" onclick="validarPagoNuevo('${p.id}', '${alumnoEscapado}', '${tratEscapado}', 'GRATIS')">✅ Asignar</button>
+            <button class="btn-validar" style="background:#FCD34D;color:#1A0A00;" onclick="validarPagoNuevo('${p.id}', '${alumnoEscapado}', '${tratEscapado}', 'GRATIS')">✅ Confirmar Apoyo</button>
             <button class="btn-rechazar-pago" onclick="rechazarPagoNuevo('${p.id}')">↩️ Rechazar</button>
           </div>
         </div>`;
       } else if (esGarantia) {
+        const fechaHora = p.fecha ? new Date(p.fecha).toLocaleString('es-MX', {year:'2-digit', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit'}) : 'N/A';
         html += `
         <div class="pago-enviado-card" style="border-color:rgba(245,158,11,0.5);background:rgba(245,158,11,0.05);">
-          <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(245,158,11,0.15);color:#FCD34D;font-size:11px;font-weight:800;padding:3px 10px;border-radius:100px;margin-bottom:10px;">🔄 SOLICITUD DE GARANTÍA</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(245,158,11,0.15);color:#FCD34D;font-size:11px;font-weight:800;padding:3px 10px;border-radius:100px;">🔄 GARANTÍA</div>
+            <div style="font-size:11px;color:#94A3B8;">📅 ${fechaHora}</div>
+          </div>
           <div class="pe-header">
             <div>
               <div class="pe-ref" style="color:#FCD34D;">${ref}</div>
               <div class="pe-alumno">👤 ${esc(alumnoNombre)}</div>
             </div>
-            <div style="font-size:12px;color:#94A3B8;text-align:right;">Prospecto malo:<br><strong style="color:#F87171;">${esc(telMalo)}</strong></div>
+            <div style="font-size:12px;color:#94A3B8;text-align:right;">Prospecto problemático:<br><strong style="color:#F87171;">${esc(telMalo)}</strong></div>
           </div>
-          <div class="pe-trat">Nuevo prospecto solicitado: ${esc(p.tratamiento)}</div>
-          <div style="font-size:12px;color:#94A3B8;margin-bottom:10px;">📸 Evidencia adjunta — debe mostrar número sin guardar y mensaje de cierre</div>
-          ${tieneComp ? `<img class="pe-comp-thumb" src="${p.comprobante}" alt="Evidencia" onclick="abrirLightboxComp('${p.comprobante}')">` : '<div style="background:#0A1628;border-radius:10px;height:80px;display:flex;align-items:center;justify-content:center;color:#64748B;font-size:13px;margin-bottom:12px">Sin evidencia adjunta</div>'}
+          <div class="pe-trat">Nuevo prospecto por garantía: ${esc(p.tratamiento)}</div>
+          <div style="font-size:12px;color:#F59E0B;margin:8px 0;padding:8px;background:rgba(245,158,11,0.1);border-radius:6px;">📸 Evidencia requerida — debe mostrar número sin guardar y mensaje de cierre</div>
+          ${tieneComp ? `<img class="pe-comp-thumb" src="${p.comprobante}" alt="Evidencia" onclick="abrirLightboxComp('${p.comprobante}')">` : '<div style="background:#0A1628;border-radius:10px;height:80px;display:flex;align-items:center;justify-content:center;color:#64748B;font-size:13px;margin-bottom:12px">⚠️ Sin evidencia adjunta</div>'}
           <div class="pe-actions">
             <button class="btn-validar" style="background:#F59E0B;" onclick="aprobarGarantia('${p.id}', '${alumnoEscapado}', '${tratEscapado}', '${telMalo}')">✅ Aprobar Garantía</button>
             <button class="btn-rechazar-pago" onclick="rechazarPagoNuevo('${p.id}')">↩️ Rechazar</button>
           </div>
         </div>`;
       } else {
+        const fechaHora = p.fecha ? new Date(p.fecha).toLocaleString('es-MX', {year:'2-digit', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit'}) : 'N/A';
         html += `
         <div class="pago-enviado-card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(59,130,246,0.15);color:#60A5FA;font-size:11px;font-weight:800;padding:3px 10px;border-radius:100px;">💳 PAGO</div>
+            <div style="font-size:11px;color:#94A3B8;">📅 ${fechaHora}</div>
+          </div>
           <div class="pe-header">
             <div>
               <div class="pe-ref">${ref}</div>
@@ -1138,6 +1109,7 @@
             <div class="pe-monto">${esc(pc)}</div>
           </div>
           <div class="pe-trat">${esc(p.tratamiento)}</div>
+          <div style="font-size:12px;color:#3B82F6;margin:8px 0;padding:8px;background:rgba(59,130,246,0.1);border-radius:6px;">📸 Comprobante de pago — debe validarse contra CLABE</div>
           ${tieneComp ? `<img class="pe-comp-thumb" src="${p.comprobante}" alt="Comprobante" onclick="abrirLightboxComp('${p.comprobante}')">` : '<div style="background:#0A1628;border-radius:10px;height:80px;display:flex;align-items:center;justify-content:center;color:#64748B;font-size:13px;margin-bottom:12px">Sin comprobante adjunto</div>'}
           <div class="pe-actions">
             <button class="btn-validar" onclick="validarPagoNuevo('${p.id}', '${alumnoEscapado}', '${tratEscapado}', '${pc}')">✅ Validar pago</button>
@@ -1399,7 +1371,7 @@
       if (idx !== -1) todos[idx].estado = nuevoEstado;
       renderProspectos();
       renderPagos();
-      renderAlertas();
+      // renderAlertas();  // Sección deshabilitada
       renderResumen();
       actualizarKPIs();
       toast(msg || '✅ Listo');
