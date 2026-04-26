@@ -1544,32 +1544,21 @@
     const esGarantiaMsg = telMalo !== null;
     const ref = esGarantiaMsg ? ('GAR-' + String(p.id).padStart(3, '0')) : ('VIN-' + String(p.id).padStart(3, '0'));
 function enviarDatosPaciente(id) {
-  console.log("Intentando enviar datos para el ID:", id);
-  
-  // 1. Buscamos al paciente (siendo flexibles con el formato del ID)
-  const p = prospectos.find(x => 
-    String(x.id).trim() === String(id).trim() || 
+  const p = prospectos.find(x =>
+    String(x.id).trim() === String(id).trim() ||
     String(x.id).replace('P-', 'VIN-').trim() === String(id).trim()
   );
 
   if (!p) {
-    alert("❌ Error: No se encontró al paciente con el ID: " + id + "\nRevisa la consola (F12) para ver la lista de prospectos.");
-    console.log("Lista actual de prospectos:", prospectos);
+    alert("❌ Error: No se encontró al paciente con el ID: " + id);
     return;
   }
 
-  if (!p.telAlumno) {
-    alert("⚠️ El alumno no tiene teléfono registrado en la base de datos.");
-    return;
-  }
-
-  // 2. Definimos el saludo dinámico
   let saludo = "✅ *¡Tu pago ha sido validado!*";
   if (p.pago && String(p.pago).includes("Apoyo")) {
     saludo = "🎉 *¡Tu apoyo ha sido aprobado!*";
   }
 
-  // 3. Construimos el mensaje
   const mensaje = `${saludo}
 Aquí tienes los datos de tu paciente asignado:
 
@@ -1580,13 +1569,16 @@ Aquí tienes los datos de tu paciente asignado:
 
 ¡Mucho éxito en tu clínica! 🦷`;
 
-  // 4. Limpiamos el teléfono del alumno (quitamos espacios/guiones)
-  const telLimpio = String(p.telAlumno).replace(/\D/g, '');
-  
-  // 5. Intentamos abrir WhatsApp
-  const url = `https://wa.me/${telLimpio}?text=${encodeURIComponent(mensaje)}`;
-  console.log("Abriendo URL:", url);
-  
+  const telLimpio = String(p.telAlumno || '').replace(/\D/g, '');
+  if (!telLimpio) {
+    alert("⚠️ El alumno no tiene teléfono registrado.");
+    return;
+  }
+
+  const url = `https://wa.me/52${telLimpio}?text=${encodeURIComponent(mensaje)}`;
+  window.open(url, '_blank');
+} // <--- ESTA ES LA LLAVE QUE TE FALTA EN TU FOTO
+}
   const win = window.open(url, '_blank');
   if (!win) {
     alert("🚀 El navegador bloqueó la ventana emergente. Por favor, permite los pop-ups para esta página.");
