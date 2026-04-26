@@ -1543,7 +1543,31 @@
 
     const esGarantiaMsg = telMalo !== null;
     const ref = esGarantiaMsg ? ('GAR-' + String(p.id).padStart(3, '0')) : ('VIN-' + String(p.id).padStart(3, '0'));
-    const msgAlumno = `🦷 *¡Hola ${alumno}!* ${esGarantiaMsg ? 'Tu garantía ha sido validada.' : 'Tu pago ha sido validado.'}\n\nAquí tienes los datos de tu paciente:\n\n📋 *N° Prospecto:* ${ref}\n👤 *Paciente:* ${nomPaciente}\n📞 *Teléfono:* ${p.telefono || 'Ver en Sheets'}\n👉 *Link WA:* https://wa.me/52${telLimpio}\n\n🔧 *Tratamiento:* ${p.tratamiento}\n🕐 *Horario preferido:* ${p.horario || 'A definir'}\n${folio}\n¡Mucho éxito en clínica!`;
+function enviarDatosPaciente(id) {
+  const p = prospectos.find(x => String(x.id) === String(id));
+  if(!p) return;
+
+  // Detectamos si el estatus del pago contiene la palabra "Apoyo"
+  let saludo = "";
+  if (p.pago && p.pago.includes("Apoyo")) {
+    saludo = "🎉 *¡Tu apoyo ha sido aprobado!*";
+  } else {
+    saludo = "✅ *¡Tu pago ha sido validado!*";
+  }
+
+  // Construimos el mensaje con el saludo dinámico
+  const msg = `${saludo}
+Aquí tienes los datos de tu paciente asignado:
+
+📋 *Folio:* ${p.id}
+👤 *Paciente:* ${p.nombre}
+📞 *WhatsApp:* ${p.telefono}
+🔧 *Tratamiento:* ${p.tratamiento}
+
+¡Mucho éxito en tu clínica! 🦷`;
+
+  window.open(`https://wa.me/${p.telAlumno}?text=${encodeURIComponent(msg)}`, '_blank');
+}
     const msgAlumnoEncoded = encodeURIComponent(msgAlumno);
 
     const msgPaciente = `Hola ${primerNombre}, te contactamos de Enlace Odontológico Universitario 🦷\n\nTu caso ha sido asignado al doctor(a) *${alumno}*, quien se pondrá en contacto contigo muy pronto para coordinar tu cita.\n\nPor favor, guarda su número para cuando te escriba: ${p.telAlumno || 'No registrado'}\n\n¡Gracias por tu confianza! ✅`;
