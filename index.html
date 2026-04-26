@@ -1536,19 +1536,25 @@
     const esGarantiaMsg = telMalo !== null;
     const ref = esGarantiaMsg ? ('GAR-' + String(p.id).padStart(3, '0')) : ('VIN-' + String(p.id).padStart(3, '0'));
 
-    let saludo = "✅ *¡Tu pago ha sido validado!*";
-    if (p.pago && String(p.pago).includes("Apoyo")) {
-      saludo = "🎉 *¡Tu apoyo ha sido aprobado!*";
+    let saludo;
+    if (esGarantiaMsg) {
+      saludo = "🔄 *¡Tu garantía ha sido aprobada!*";
+    } else if (String(p.alumnoAsignado || '').includes('[SÁBADO]') || String(p.comprobante || '') === 'GRATIS') {
+      saludo = "🎁 *¡Tu prospecto de apoyo ha sido asignado!*";
+    } else {
+      saludo = "✅ *¡Tu pago ha sido validado!*";
     }
 
     const msgAlumno = `${saludo}
 Aquí tienes los datos de tu paciente asignado:
 
-📋 *Folio:* ${p.id}
-👤 *Paciente:* ${p.nombre}
+🔑 *VIN:* ${ref}
+${folio}👤 *Paciente:* ${p.nombre}
 📞 *WhatsApp:* ${p.telefono}
 🔧 *Tratamiento:* ${p.tratamiento}
+📅 *Horario del paciente:* ${p.horario || 'No especificado'}
 
+⚠️ _El expediente clínico lo asigna la escuela al momento de la consulta._
 ¡Mucho éxito en tu clínica! 🦷`;
 
     const msgAlumnoEncoded = encodeURIComponent(msgAlumno);
