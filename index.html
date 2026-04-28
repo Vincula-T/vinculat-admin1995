@@ -889,11 +889,26 @@
   async function cargarTodo() {
     try {
       const res  = await fetch(API + '?accion=admin');
-      const json = await res.json();
-      if (!json.ok) throw new Error();
+      let json;
+      try {
+        json = await res.json();
+      } catch(parseErr) {
+        const raw = await res.clone().text().catch(() => '(no se pudo leer)');
+        console.error('API no devolvió JSON válido:', raw.substring(0, 500));
+        alert('❌ El backend devolvió una respuesta inválida.\n\nRevisa tu Google Apps Script — probablemente tiene un error de sintaxis.\n\nDetalle en la consola (F12).');
+        toast('❌ Error: respuesta inválida del backend');
+        return;
+      }
+      if (!json.ok) {
+        const msg = json.error || json.mensaje || 'sin detalle';
+        console.error('API devolvió ok:false —', msg);
+        alert('❌ Error del backend: ' + msg + '\n\nRevisa tu Google Apps Script.');
+        toast('❌ Error del backend');
+        return;
+      }
       todos = json.data.reverse();
       if (json.precios) PRECIOS = Object.assign(PRECIOS, json.precios);
-      
+
       renderProspectos();
       renderPagos();
       // renderAlertas();  // Sección deshabilitada
@@ -901,7 +916,8 @@
       actualizarKPIs();
       renderPrecios();
     } catch(e) {
-      toast('❌ Error al cargar datos');
+      console.error('Error de red al cargar datos:', e);
+      toast('❌ Error de red — verifica tu conexión');
     }
   }
 
