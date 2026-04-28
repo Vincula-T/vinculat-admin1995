@@ -1560,13 +1560,12 @@ Abre tu portal → Sección "Guiones"
 Encontrarás mensajes listos para enviar (primer contacto, seguimiento, cierre)
 
 🛡️ *Tu Garantía:*
-Si el paciente no asiste o no responde después de 5-7 días, reclama otro prospecto con el mismo VIN ${ref} desde tu portal
+Si el paciente no asiste o no responde después de 3-5 días, reclama otro prospecto desde tu portal
 
-⚠️ _El expediente clínico lo asigna la escuela al momento de la consulta._
 ¡Mucho éxito en tu clínica! 🦷`;
 
     const msgAlumnoEncoded = encodeURIComponent(msgAlumno);
-    const msgPaciente = `Hola ${primerNombre}, te contactamos de Enlace Odontológico Universitario 🦷\n\nTu caso ha sido asignado al doctor(a) *${alumno}*, quien se pondrá en contacto contigo muy pronto para coordinar tu cita.\n\n📱 Guarda su número: ${p.telAlumno || 'No registrado'}\n\n⏰ Si no responde en 5-7 días, se le asignará a otro doctor. Contesta a tiempo para reservar tu lugar.\n\n¡Gracias por tu confianza! ✅`;
+    const msgPaciente = `Hola ${primerNombre}, te contactamos de Enlace Odontológico Universitario 🦷\n\nTu caso ha sido asignado al doctor(a) *${alumno}*, quien se pondrá en contacto contigo muy pronto para coordinar tu cita.\n\n📱 Guarda su número: ${p.telAlumno || 'No registrado'}\n\n⏰ Si no responde en 3-5 días, se le asignará a otro doctor. Contesta a tiempo para reservar tu lugar.\n\n¡Gracias por tu confianza! ✅`;
     const msgPacienteEncoded = encodeURIComponent(msgPaciente);
 
     const msgGarantia = `Hola, buen día. 👋 Te saludamos de Enlace Odontológico.\n\nEstamos dando seguimiento a tu cita dental. Queremos confirmar si el estudiante ${alumno} logró contactarte, ya que es importante atender tu caso.\n\n❓ Si el estudiante SÍ se comunicó pero ya no te interesa: contéstale y avísale para que no espere más.\n\n❓ Si el estudiante NO se comunicó: te asignaremos a otro doctor de inmediato para atender tu caso esta semana.\n\nResponde sí o no para que podamos ayudarte. ¡Gracias! 🦷`;
