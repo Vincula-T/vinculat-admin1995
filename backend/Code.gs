@@ -254,6 +254,7 @@ function accionRegistrarSolicitud(params, sheet) {
       sheet.getRange(row, COL_FECHA_ASIG).setValue(new Date());
       sheet.getRange(row, COL_PAGO).setValue('Pendiente validacion');
       sheet.getRange(row, COL_REF_PAGO).setValue(ref);
+      if (monto) sheet.getRange(row, COL_MONTO).setValue(monto);
       if (urlComprobante) {
         sheet.getRange(row, COL_COMPROBANTE).setValue(urlComprobante);
       } else if (compB64 && compB64.length > 100) {
@@ -336,6 +337,8 @@ function leerMisCasos(tel, sheet) {
         horario:         data[i][COL_HORARIO_MAN - 1],
         estado:          String(data[i][COL_ESTADO - 1] || ''),
         alumno:          data[i][COL_ALUMNO - 1],
+        pago:            data[i][COL_PAGO - 1],
+        monto:           data[i][COL_MONTO - 1],
         fechaAsignacion: data[i][COL_FECHA_ASIG - 1] ? Utilities.formatDate(
                            new Date(data[i][COL_FECHA_ASIG - 1]),
                            Session.getScriptTimeZone(), 'dd/MM/yyyy') : ''
