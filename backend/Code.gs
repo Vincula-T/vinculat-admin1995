@@ -32,6 +32,22 @@ function getProp(name) {
   return v;
 }
 
+function enviarCorreoSeguro(asunto, cuerpo) {
+  try {
+    var destinatario = EMAIL_ADMIN();
+    if (!destinatario) {
+      Logger.log('ERROR: EMAIL_ADMIN no configurado');
+      return false;
+    }
+    MailApp.sendEmail(destinatario, asunto, cuerpo);
+    Logger.log('✓ Correo enviado a: ' + destinatario);
+    return true;
+  } catch(err) {
+    Logger.log('ERROR enviando correo: ' + err.message);
+    return false;
+  }
+}
+
 function generarSiguienteId(sheet) {
   var lastRow = sheet.getLastRow();
   if (lastRow < 2) return 'P-1';
@@ -90,7 +106,7 @@ function enviarAlertaVIP(e) {
   var esCasoVIP = motivo.match(/fractura|frente|anterior|golpe|quebrado|trauma|oscuro/) ||
                   (motivo.match(/endo/) && !motivo.match(/molar|muela/));
   if (esCasoVIP) {
-    MailApp.sendEmail(EMAIL_ADMIN(), 'ALERTA VIP: Posible Fractura/Endo',
+    enviarCorreoSeguro('ALERTA VIP: Posible Fractura/Endo',
       'Llego un paciente urgente:\n\nNombre: ' + nombre + '\nMotivo: ' + motivoOriginal + '\nTel: ' + telefono + '\n\nRevisa el panel admin.');
   }
 }
@@ -111,7 +127,7 @@ function onEdit(e) {
   if (estado === 'Garantia') {
     var nombre = sheet.getRange(row, COL_NOMBRE).getValue();
     var idPac  = sheet.getRange(row, COL_ID).getValue();
-    MailApp.sendEmail(EMAIL_ADMIN(), 'Garantia solicitada: ' + idPac,
+    enviarCorreoSeguro('Garantia solicitada: ' + idPac,
       'Paciente: ' + nombre + ' | ID: ' + idPac + '\nRevisa el panel admin para validar.');
   }
   if (['Disponible', 'Sabado', 'Gratis', 'Regalado', 'Contactado'].indexOf(estado) !== -1) {
@@ -243,7 +259,7 @@ function accionRegistrarSolicitud(params, sheet) {
         sheet.getRange(row, COL_COMPROBANTE).setValue('[BASE64-PENDIENTE] ' + compB64.substring(0, 100));
       }
       var tratamiento = data[i][COL_TRATAMIENTO - 1] || '';
-      MailApp.sendEmail(EMAIL_ADMIN(), 'Pago pendiente: ' + ref,
+      enviarCorreoSeguro('Pago pendiente: ' + ref,
         'Nuevo comprobante recibido!\n\nAlumno: ' + alumno + '\nTel: ' + telAlumno +
         '\nRef: ' + ref + '\nMonto: ' + monto + '\nTratamiento: ' + tratamiento +
         '\nComprobante: ' + (urlComprobante || '(no guardado)') +
@@ -288,7 +304,7 @@ function accionRegistrarSolicitudGratis(params, sheet) {
       sheet.getRange(row, COL_REF_PAGO).setValue(vin);
       
       var tratamiento = data[i][COL_TRATAMIENTO - 1] || '';
-      MailApp.sendEmail(EMAIL_ADMIN(), 'Apoyo solicitado: ' + vin,
+      enviarCorreoSeguro('Apoyo solicitado: ' + vin,
         'Un alumno reclamó un prospecto gratuito.\n\n' +
         'Alumno: ' + alumno + '\nTel: ' + telAlumno +
         '\nProspecto: ' + vin + ' - ' + tratamiento +
@@ -351,7 +367,7 @@ function accionSolicitarGarantia(params, sheet) {
         Logger.log('Evidencia guardada: ' + (urlEvidencia || '(error)'));
       }
       var tratamiento = data[i][COL_TRATAMIENTO - 1] || '';
-      MailApp.sendEmail(EMAIL_ADMIN(), 'Garantia solicitada: ' + id,
+      enviarCorreoSeguro('Garantia solicitada: ' + id,
         'El alumno reporta que el prospecto no respondio.\n\n' +
         'Alumno: ' + alumno + '\nTel: ' + telAlumno +
         '\nProspecto: ' + id + ' - ' + tratamiento +
