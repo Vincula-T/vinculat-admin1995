@@ -1396,6 +1396,17 @@
     }
   }
 
+  async function actualizarMonto(id, monto) {
+    try {
+      const url = API + '?accion=actualizarMonto&id=' + encodeURIComponent(id) + '&monto=' + encodeURIComponent(monto);
+      const res  = await fetch(url);
+      const json = await res.json();
+      if (!json.ok) console.warn('Advertencia: No se pudo guardar el monto:', json.error);
+    } catch(e) {
+      console.warn('Advertencia: Error al guardar el monto:', e.message);
+    }
+  }
+
   // ── CREAR VIP ──
   async function crearVIP() {
     const nombre  = document.getElementById('vip-nombre').value.trim();
@@ -1505,7 +1516,11 @@
     if (!ok) return;
     await cambiarEstado(id, 'Asignado', `Pago validado ✅`);
     const p = todos.find(x => String(x.id) === String(id));
-    if (p) mostrarEnvioWhatsApp(p, alumno);
+    if (p) {
+      p.monto = monto;
+      await actualizarMonto(id, monto);
+      mostrarEnvioWhatsApp(p, alumno);
+    }
     renderPagos();
   }
 
