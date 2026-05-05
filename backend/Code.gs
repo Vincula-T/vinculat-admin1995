@@ -252,7 +252,7 @@ function accionRegistrarSolicitud(params, sheet) {
       sheet.getRange(row, COL_ALUMNO).setValue(alumno);
       sheet.getRange(row, COL_TEL_ALUMNO).setValue(telAlumno);
       sheet.getRange(row, COL_FECHA_ASIG).setValue(new Date());
-      sheet.getRange(row, COL_PAGO).setValue('Pendiente validacion');
+      sheet.getRange(row, COL_PAGO).setValue('Pagado');
       sheet.getRange(row, COL_REF_PAGO).setValue(ref);
       if (monto) sheet.getRange(row, COL_MONTO).setValue(monto);
       if (urlComprobante) {
