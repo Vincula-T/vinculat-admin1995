@@ -301,8 +301,7 @@ function accionRegistrarSolicitudGratis(params, sheet) {
       sheet.getRange(row, COL_TEL_ALUMNO).setValue(telAlumno);
       sheet.getRange(row, COL_FECHA_ASIG).setValue(new Date());
       
-      // MARCADORES CLAVE: Ponemos el VIN real y lo etiquetamos como Apoyo
-      sheet.getRange(row, COL_PAGO).setValue('Pendiente (Apoyo)'); 
+      sheet.getRange(row, COL_PAGO).setValue('Apoyo');
       sheet.getRange(row, COL_REF_PAGO).setValue(vin);
       
       var tratamiento = data[i][COL_TRATAMIENTO - 1] || '';
@@ -365,6 +364,7 @@ function accionSolicitarGarantia(params, sheet) {
       var row = i + 1;
       sheet.getRange(row, COL_ESTADO).setValue('Garantia');
       sheet.getRange(row, COL_ESTADO_PORTAL).setValue('Garantia');
+      sheet.getRange(row, COL_PAGO).setValue('Garantía');
       var urlEvidencia = '';
       if (evidencia && evidencia.length > 100) {
         urlEvidencia = guardarComprobanteEnDrive(evidencia, 'garantia_' + id + '_' + Date.now());
