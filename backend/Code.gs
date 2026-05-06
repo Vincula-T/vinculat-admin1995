@@ -10,12 +10,13 @@
 //
 // CONFIGURACION INICIAL (solo una vez):
 //   Apps Script → ⚙️ Configuracion del proyecto → "Propiedades de
-//   la secuencia de comandos" → agregar estas 4 propiedades:
+//   la secuencia de comandos" → agregar estas 5 propiedades:
 //
 //     SPREADSHEET_ID       = (ID del Google Sheet)
 //     EMAIL_ADMIN          = (correo que recibe notificaciones)
 //     FOLDER_COMPROBANTES  = (ID de la carpeta Drive de comprobantes)
 //     FOLDER_FOTOS         = (ID de la carpeta Drive de fotos)
+//     NIP_ADMIN            = (PIN/NIP para validacion de acceso al admin)
 //
 //   Si falta alguna, getProp() lanzara un error descriptivo.
 //
@@ -67,6 +68,14 @@ function SPREADSHEET_ID()      { return getProp('SPREADSHEET_ID'); }
 function EMAIL_ADMIN()         { return getProp('EMAIL_ADMIN'); }
 function FOLDER_COMPROBANTES() { return getProp('FOLDER_COMPROBANTES'); }
 function FOLDER_FOTOS()        { return getProp('FOLDER_FOTOS'); }
+function NIP_ADMIN()           { return getProp('NIP_ADMIN'); }
+
+function validarNIP(nipIngresado) {
+  var nipCorrecto = NIP_ADMIN();
+  if (String(nipIngresado).trim() !== String(nipCorrecto).trim()) {
+    throw new Error('NIP incorrecto. Acceso denegado.');
+  }
+}
 
 var COL_ESTADO        = 1;
 var COL_FECHA_REG     = 2;
@@ -144,13 +153,31 @@ function onEdit(e) {
 function doGet(e) {
   var sheet  = SpreadsheetApp.openById(SPREADSHEET_ID()).getSheetByName(SHEET_NAME);
   var accion = e.parameter.accion || '';
-  if (accion === 'cambiarEstado') return accionCambiarEstado(e.parameter, sheet);
-  if (accion === 'crearVIP')      return accionCrearVIP(e.parameter, sheet);
-  if (accion === 'getPrecios')    return accionGetPrecios();
-  if (accion === 'setPrecios')    return accionSetPrecios(e.parameter);
-  if (accion === 'admin')         return leerTodosLosProspectos(sheet);
-  if (accion === 'miscasos')      return leerMisCasos(e.parameter.tel, sheet);
-  return leerProspectosPortal(sheet);
+  var nip    = e.parameter.nip || '';
+  try {
+    if (accion === 'cambiarEstado') {
+      validarNIP(nip);
+      return accionCambiarEstado(e.parameter, sheet);
+    }
+    if (accion === 'crearVIP') {
+      validarNIP(nip);
+      return accionCrearVIP(e.parameter, sheet);
+    }
+    if (accion === 'getPrecios')    return accionGetPrecios();
+    if (accion === 'setPrecios') {
+      validarNIP(nip);
+      return accionSetPrecios(e.parameter);
+    }
+    if (accion === 'admin') {
+      validarNIP(nip);
+      return leerTodosLosProspectos(sheet);
+    }
+    if (accion === 'miscasos')      return leerMisCasos(e.parameter.tel, sheet);
+    return leerProspectosPortal(sheet);
+  } catch(err) {
+    Logger.log('ERROR en doGet: ' + err.message);
+    return jsonOk({ ok: false, error: err.message });
+  }
 }
 
 
@@ -171,7 +198,7 @@ function doPost(e) {
     if (params.accion === 'registrarSolicitud')       return accionRegistrarSolicitud(params, sheet);
     if (params.accion === 'registrarSolicitudGratis') return accionRegistrarSolicitudGratis(params, sheet);
     if (params.accion === 'solicitarGarantia')        return accionSolicitarGarantia(params, sheet);
-    return manejarPostPortal(params);
+    return manejarPostPortal(params, sheet);
   } catch(err) {
     Logger.log('Error parseando JSON: ' + err.message);
     Logger.log('Primeros 500 chars del body: ' + postData.substring(0, 500));
@@ -503,10 +530,17 @@ function subirFotoADrive(jotformUrl, nombrePaciente) {
 }
 
 
-function manejarPostPortal(params) {
-  var sheet = SpreadsheetApp.openById(SPREADSHEET_ID()).getSheetByName(SHEET_NAME);
+function manejarPostPortal(params, sheet) {
+  if (!sheet) sheet = SpreadsheetApp.openById(SPREADSHEET_ID()).getSheetByName(SHEET_NAME);
   var data  = sheet.getDataRange().getValues();
-  if (params.accion === 'crearVIP') return accionCrearVIP(params, sheet);
+  if (params.accion === 'crearVIP') {
+    try {
+      validarNIP(params.nip);
+      return accionCrearVIP(params, sheet);
+    } catch(err) {
+      return jsonOk({ ok: false, error: err.message });
+    }
+  }
   for (var i = 1; i < data.length; i++) {
     if (String(data[i][COL_ID - 1]).trim() === String(params.id).trim()) {
       if (params.estado) sheet.getRange(i + 1, COL_ESTADO).setValue(params.estado);
