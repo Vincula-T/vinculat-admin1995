@@ -888,7 +888,7 @@
   // ── CARGAR DATOS ──
   async function cargarTodo() {
     try {
-      const res  = await fetch(API + '?accion=admin');
+      const res  = await fetch(API + '?accion=admin&nip=' + encodeURIComponent(pinActual));
       let json;
       try {
         json = await res.json();
@@ -998,6 +998,7 @@
 
     const payload = [
       'accion=setPrecios',
+      'nip=' + encodeURIComponent(pinActual),
       'precio_general=' + document.getElementById('precio_general').value,
       'precio_vip=' + document.getElementById('precio_vip').value,
       'precio_infantil_tarde=' + document.getElementById('precio_infantil_tarde').value,
@@ -1378,7 +1379,7 @@
   async function cambiarEstado(id, nuevoEstado, msg) {
     toast('⏳ Guardando...');
     try {
-      const url = API + '?accion=cambiarEstado&id=' + encodeURIComponent(id) + '&estado=' + encodeURIComponent(nuevoEstado);
+      const url = API + '?accion=cambiarEstado&id=' + encodeURIComponent(id) + '&estado=' + encodeURIComponent(nuevoEstado) + '&nip=' + encodeURIComponent(pinActual);
       const res  = await fetch(url);
       const json = await res.json();
       if (!json.ok) throw new Error(json.error || 'Error');
@@ -1421,7 +1422,8 @@
       const url = API + '?accion=crearVIP&nombre=' + encodeURIComponent(nombre) +
                   '&telefono=' + encodeURIComponent(tel) +
                   '&motivo=' + encodeURIComponent(motivo) +
-                  '&horario=' + encodeURIComponent(horario);
+                  '&horario=' + encodeURIComponent(horario) +
+                  '&nip=' + encodeURIComponent(pinActual);
       await fetch(url);
       document.getElementById('vip-nombre').value = '';
       document.getElementById('vip-tel').value = '';
